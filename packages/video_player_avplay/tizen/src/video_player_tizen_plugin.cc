@@ -188,9 +188,9 @@ std::optional<FlutterError> VideoPlayerTizenPlugin::SetVolume(
   if (!player) {
     return FlutterError("Invalid argument", "Player not found");
   }
-  if (!player->SetVolume(msg.volume())) {
-    return FlutterError("SetVolume", "Player set volume failed");
-  }
+  // if (!player->SetVolume(msg.volume())) {
+  //   return FlutterError("SetVolume", "Player set volume failed");
+  // }
   return std::nullopt;
 }
 
@@ -214,7 +214,9 @@ ErrorOr<TrackMessage> VideoPlayerTizenPlugin::Track(
     return FlutterError("Invalid argument", "Player not found");
   }
 
-  TrackMessage result(msg.player_id(), player->GetTrackInfo(msg.track_type()));
+  // TrackMessage result(msg.player_id(),
+  // player->GetTrackInfo(msg.track_type()));
+  TrackMessage result(msg.player_id(), {});
   return result;
 }
 
@@ -224,7 +226,8 @@ ErrorOr<bool> VideoPlayerTizenPlugin::SetTrackSelection(
   if (!player) {
     return FlutterError("Invalid argument", "Player not found");
   }
-  return player->SetTrackSelection(msg.track_id(), msg.track_type());
+  // return player->SetTrackSelection(msg.track_id(), msg.track_type());
+  return false;
 }
 
 std::optional<FlutterError> VideoPlayerTizenPlugin::Play(
@@ -244,7 +247,8 @@ ErrorOr<bool> VideoPlayerTizenPlugin::SetDeactivate(const PlayerMessage &msg) {
   if (!player) {
     return FlutterError("Invalid argument", "Player not found");
   }
-  return player->Deactivate();
+  // return player->Deactivate();
+  return false;
 }
 
 ErrorOr<bool> VideoPlayerTizenPlugin::SetActivate(const PlayerMessage &msg) {
@@ -252,7 +256,8 @@ ErrorOr<bool> VideoPlayerTizenPlugin::SetActivate(const PlayerMessage &msg) {
   if (!player) {
     return FlutterError("Invalid argument", "Player not found");
   }
-  return player->Activate();
+  // return player->Activate();
+  return false;
 }
 
 std::optional<FlutterError> VideoPlayerTizenPlugin::Pause(
@@ -322,7 +327,9 @@ ErrorOr<std::string> VideoPlayerTizenPlugin::GetStreamingProperty(
   if (!player) {
     return FlutterError("Invalid argument", "Player not found");
   }
-  return player->GetStreamingProperty(msg.streaming_property_type());
+  // return player->GetStreamingProperty(msg.streaming_property_type());
+  std::string result;
+  return result;
 }
 
 ErrorOr<bool> VideoPlayerTizenPlugin::SetBufferConfig(
@@ -358,9 +365,9 @@ std::optional<FlutterError> VideoPlayerTizenPlugin::Suspend(int64_t player_id) {
   if (!player) {
     return FlutterError("Invalid argument", "Player not found");
   }
-  if (!player->Suspend()) {
-    return FlutterError("Operation failed", "Player suspend error");
-  }
+  // if (!player->Suspend()) {
+  //   return FlutterError("Operation failed", "Player suspend error");
+  // }
   return std::nullopt;
 }
 std::optional<FlutterError> VideoPlayerTizenPlugin::Restore(
@@ -370,9 +377,9 @@ std::optional<FlutterError> VideoPlayerTizenPlugin::Restore(
     return FlutterError("Invalid argument", "Player not found");
   }
 
-  if (!player->Restore(msg, resume_time)) {
-    return FlutterError("Operation failed", "Player restore error");
-  }
+  // if (!player->Restore(msg, resume_time)) {
+  //   return FlutterError("Operation failed", "Player restore error");
+  // }
   return std::nullopt;
 }
 
@@ -382,8 +389,8 @@ std::optional<FlutterError> VideoPlayerTizenPlugin::SetStreamingProperty(
   if (!player) {
     return FlutterError("Invalid argument", "Player not found");
   }
-  player->SetStreamingProperty(msg.streaming_property_type(),
-                               msg.streaming_property_value());
+  // player->SetStreamingProperty(msg.streaming_property_type(),
+  //                              msg.streaming_property_value());
   return std::nullopt;
 }
 
@@ -393,7 +400,8 @@ ErrorOr<bool> VideoPlayerTizenPlugin::SetData(
   if (!player) {
     return FlutterError("Invalid argument", "Player not found");
   }
-  return player->SetData(msg.map_data());
+  // return player->SetData(msg.map_data());
+  return false;
 }
 
 ErrorOr<DashPropertyMapMessage> VideoPlayerTizenPlugin::GetData(
@@ -402,8 +410,9 @@ ErrorOr<DashPropertyMapMessage> VideoPlayerTizenPlugin::GetData(
   if (!player) {
     return FlutterError("Invalid argument", "Player not found");
   }
-  DashPropertyMapMessage result(msg.player_id(),
-                                player->GetData(msg.type_list()));
+  // DashPropertyMapMessage result(msg.player_id(),
+  //                               player->GetData(msg.type_list()));
+  DashPropertyMapMessage result(msg.player_id(), {});
   return result;
 }
 
@@ -413,7 +422,8 @@ ErrorOr<TrackMessage> VideoPlayerTizenPlugin::GetActiveTrackInfo(
   if (!player) {
     return FlutterError("Invalid argument", "Player not found");
   }
-  TrackMessage result(msg.player_id(), player->GetActiveTrackInfo());
+  // TrackMessage result(msg.player_id(), player->GetActiveTrackInfo());
+  TrackMessage result(msg.player_id(), {});
   return result;
 }
 
