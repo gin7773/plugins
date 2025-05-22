@@ -6,6 +6,7 @@
 #define FLUTTER_PLUGIN_PLUS_PLAYER_H_
 
 #include <flutter/plugin_registrar.h>
+#include <plusplayer_capi/plusplayer_capi.h>
 
 #include <memory>
 #include <string>
@@ -13,7 +14,6 @@
 #include "device_proxy.h"
 #include "drm_manager.h"
 #include "messages.h"
-#include "plusplayer/plusplayer_capi.h"
 #include "video_player.h"
 
 class PlusPlayer : public VideoPlayer {
