@@ -66,6 +66,7 @@ class VideoPlayer {
   virtual flutter::EncodableMap GetData(const flutter::EncodableList &data) {
     return flutter::EncodableMap{};
   }
+  virtual bool UpdateToken(const std::string &token) { return false; };
   virtual flutter::EncodableList GetActiveTrackInfo() {
     return flutter::EncodableList{};
   }

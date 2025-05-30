@@ -127,6 +127,10 @@ class _DashRomoteVideo extends StatefulWidget {
 
 class _DashRomoteVideoState extends State<_DashRomoteVideo> {
   late VideoPlayerController _controller;
+  final Map<StreamingPropertyType, String> _streamingProperties = {
+    StreamingPropertyType.unwantedResolution: '1920X1080',
+    StreamingPropertyType.unwantedFramerate: '60',
+  };
 
   @override
   void initState() {
@@ -134,6 +138,7 @@ class _DashRomoteVideoState extends State<_DashRomoteVideo> {
     _controller = VideoPlayerController.network(
       'https://dash.akamaized.net/dash264/TestCasesUHD/2b/11/MultiRate.mpd',
       formatHint: VideoFormat.dash,
+      streamingProperty: _streamingProperties,
     );
 
     _controller.addListener(() {
@@ -143,7 +148,17 @@ class _DashRomoteVideoState extends State<_DashRomoteVideo> {
       setState(() {});
     });
     _controller.setLooping(true);
-    _controller.initialize().then((_) => setState(() {}));
+    _controller.initialize().then((_) {
+      setState(() {});
+      // New API: update token
+      _controller.updateToken('YWJyVHlwZT1CUi1BVkMtREFTSC');
+      // New features: get the following properties.
+      _controller.getStreamingProperty(StreamingPropertyType.audioStreamInfo);
+      _controller
+          .getStreamingProperty(StreamingPropertyType.subtitleStreamInfo);
+      _controller.getStreamingProperty(StreamingPropertyType.videoStreamInfo);
+      _controller.getData(<DashPlayerProperty>{DashPlayerProperty.httpHeader});
+    });
     _controller.play();
   }
 
@@ -536,20 +551,19 @@ class _ControlsOverlay extends StatelessWidget {
         AnimatedSwitcher(
           duration: const Duration(milliseconds: 50),
           reverseDuration: const Duration(milliseconds: 200),
-          child:
-              controller.value.isPlaying
-                  ? const SizedBox.shrink()
-                  : const ColoredBox(
-                    color: Colors.black26,
-                    child: Center(
-                      child: Icon(
-                        Icons.play_arrow,
-                        color: Colors.white,
-                        size: 100.0,
-                        semanticLabel: 'Play',
-                      ),
+          child: controller.value.isPlaying
+              ? const SizedBox.shrink()
+              : const ColoredBox(
+                  color: Colors.black26,
+                  child: Center(
+                    child: Icon(
+                      Icons.play_arrow,
+                      color: Colors.white,
+                      size: 100.0,
+                      semanticLabel: 'Play',
                     ),
                   ),
+                ),
         ),
         GestureDetector(
           onTap: () {

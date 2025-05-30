@@ -647,6 +647,9 @@ PLUS_PLAYER_EXPORT bool SetData(PlusplayerRef player, const std::string data);
 
 PLUS_PLAYER_EXPORT bool GetData(PlusplayerRef player, std::string& data);
 
+PLUS_PLAYER_EXPORT bool UpdateDashToken(PlusplayerRef player,
+                                        const std::string& token);
+
 PLUS_PLAYER_EXPORT void RegisterListener(PlusplayerRef player,
                                          PlusplayerListener* listener,
                                          void* user_data);

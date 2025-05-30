@@ -170,6 +170,11 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
     throw UnimplementedError('getData() has not been implemented.');
   }
 
+  /// Update token.
+  Future<bool> updateToken(int playerId, String token) {
+    throw UnimplementedError('updateToken() has not been implemented.');
+  }
+
   /// Get activated(selected) track infomation of the associated media.
   Future<List<Track>> getActiveTrackInfo(int playerId) {
     throw UnimplementedError('getActiveTrackInfo() has not been implemented.');
@@ -376,6 +381,21 @@ enum StreamingPropertyType {
 
   /// Property to select the Scaler type, By Default MAIN Scaler selected.
   inAppMultiView,
+
+  /// Property to set the unwanted resolution, it must be in the format 'widthXheight', e.g. '1920X1080'.
+  unwantedResolution,
+
+  /// Property to set the unwanted framerate.
+  unwantedFramerate,
+
+  /// The audio track info of the dash stream.
+  audioStreamInfo,
+
+  /// The susbtitle track info of the dash stream.
+  subtitleStreamInfo,
+
+  /// The video track info of the dash stream.
+  videoStreamInfo,
 }
 
 /// The different types of buffer configurations that can be set on the player.
@@ -451,6 +471,9 @@ enum DashPlayerProperty {
 
   /// Dash player stream info, the value is string type.
   dashStreamInfo,
+
+  /// Http header of dash player, the value is string type.
+  httpHeader,
 }
 
 /// Event emitted from the platform implementation.
