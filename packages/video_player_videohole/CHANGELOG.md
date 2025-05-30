@@ -1,3 +1,11 @@
+## NEXT
+
+* Update code format.
+
+## 0.5.6
+
+* Add suspend and restore for handing onPause and onResume lifecycle event.
+
 ## 0.5.5
 
 * Update the LICENSE file so that it is recognized by pub.dev.
