@@ -127,7 +127,8 @@ class _DashRomoteVideo extends StatefulWidget {
 
 class _DashRomoteVideoState extends State<_DashRomoteVideo> {
   late VideoPlayerController _controller;
-  final Map<StreamingPropertyType, String> _streamingProperties = {
+  final Map<StreamingPropertyType, String> _streamingProperties =
+      <StreamingPropertyType, String>{
     StreamingPropertyType.unwantedResolution: '1920X1080',
     StreamingPropertyType.unwantedFramerate: '60',
   };
@@ -154,8 +155,9 @@ class _DashRomoteVideoState extends State<_DashRomoteVideo> {
       _controller.updateToken('YWJyVHlwZT1CUi1BVkMtREFTSC');
       // New features: get the following properties.
       _controller.getStreamingProperty(StreamingPropertyType.audioStreamInfo);
-      _controller
-          .getStreamingProperty(StreamingPropertyType.subtitleStreamInfo);
+      _controller.getStreamingProperty(
+        StreamingPropertyType.subtitleStreamInfo,
+      );
       _controller.getStreamingProperty(StreamingPropertyType.videoStreamInfo);
       _controller.getData(<DashPlayerProperty>{DashPlayerProperty.httpHeader});
     });
