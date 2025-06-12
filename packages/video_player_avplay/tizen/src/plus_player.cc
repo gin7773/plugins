@@ -219,35 +219,37 @@ bool PlusPlayer::Play() {
 }
 
 bool PlusPlayer::Activate() {
-    // if (!::Activate(player_, plusplayer::kTrackTypeVideo)) {
-    //   LOG_ERROR("[PlusPlayer] Fail to activate video.");
-    //   return false;
-    // }
-    if (plusplayer_activate_audio(player_) != plusplayer_error_type::PLUSPLAYER_ERROR_TYPE_NONE) {
-      LOG_ERROR("[PlusPlayer] Fail to activate audio.");
-      return false;
-    }
-    // if (!::Activate(player_, plusplayer::kTrackTypeSubtitle)) {
-    //   LOG_ERROR("[PlusPlayer] Fail to activate subtitle.");
-    // }
+  // if (!::Activate(player_, plusplayer::kTrackTypeVideo)) {
+  //   LOG_ERROR("[PlusPlayer] Fail to activate video.");
+  //   return false;
+  // }
+  if (plusplayer_activate_audio(player_) !=
+      plusplayer_error_type::PLUSPLAYER_ERROR_TYPE_NONE) {
+    LOG_ERROR("[PlusPlayer] Fail to activate audio.");
+    return false;
+  }
+  // if (!::Activate(player_, plusplayer::kTrackTypeSubtitle)) {
+  //   LOG_ERROR("[PlusPlayer] Fail to activate subtitle.");
+  // }
 
   return true;
 }
 
 bool PlusPlayer::Deactivate() {
-    if (is_prebuffer_mode_) {
-      plusplayer_stop(player_);
-      return true;
-    }
+  if (is_prebuffer_mode_) {
+    plusplayer_stop(player_);
+    return true;
+  }
 
   //   if (!::Deactivate(player_, plusplayer::kTrackTypeVideo)) {
   //     LOG_ERROR("[PlusPlayer] Fail to deactivate video.");
   //     return false;
   //   }
-    if (plusplayer_deactivate_audio(player_) != plusplayer_error_type::PLUSPLAYER_ERROR_TYPE_NONE) {
-      LOG_ERROR("[PlusPlayer] Fail to deactivate audio.");
-      return false;
-    }
+  if (plusplayer_deactivate_audio(player_) !=
+      plusplayer_error_type::PLUSPLAYER_ERROR_TYPE_NONE) {
+    LOG_ERROR("[PlusPlayer] Fail to deactivate audio.");
+    return false;
+  }
   //   if (!::Deactivate(player_, plusplayer::kTrackTypeSubtitle)) {
   //     LOG_ERROR("[PlusPlayer] Fail to deactivate subtitle.");
   //   }
@@ -391,26 +393,27 @@ std::pair<int64_t, int64_t> PlusPlayer::GetDuration() {
 }
 
 void PlusPlayer::GetVideoSize(int32_t *width, int32_t *height) {
-    if (plusplayer_get_state(player_) >= plusplayer_state::PLUSPLAYER_STATE_TRACK_SOURCE_READY) {
-      bool found = false;
-      int track_count;
-      plusplayer_track* tracks = plusplayer_get_active_track_info(player_, track_count);
-      for (size_t i = 0; i < track_count; i++) {
-        auto track = tracks[i];
-        if (track.type == plusplayer_track_type::PLUSPLAYER_TRACK_TYPE_VIDEO) {
-          *width = track.width;
-          *height = track.height;
-          found = true;
-          break;
-        }
-      }
-      if (!found) {
-        LOG_ERROR("[PlusPlayer] Player fail to get video size.");
-      } else {
-        LOG_INFO("[PlusPlayer] Video width: %d, height: %d.", *width,
-        *height);
+  if (plusplayer_get_state(player_) >=
+      plusplayer_state::PLUSPLAYER_STATE_TRACK_SOURCE_READY) {
+    bool found = false;
+    int track_count;
+    plusplayer_track *tracks =
+        plusplayer_get_active_track_info(player_, track_count);
+    for (size_t i = 0; i < track_count; i++) {
+      auto track = tracks[i];
+      if (track.type == plusplayer_track_type::PLUSPLAYER_TRACK_TYPE_VIDEO) {
+        *width = track.width;
+        *height = track.height;
+        found = true;
+        break;
       }
     }
+    if (!found) {
+      LOG_ERROR("[PlusPlayer] Player fail to get video size.");
+    } else {
+      LOG_INFO("[PlusPlayer] Video width: %d, height: %d.", *width, *height);
+    }
+  }
 }
 
 bool PlusPlayer::IsReady() {
@@ -451,9 +454,9 @@ bool PlusPlayer::SetDisplay() {
   return true;
 }
 
- flutter::EncodableValue PlusPlayer::ParseVideoTrack(
-  plusplayer_track video_track) {
-   flutter::EncodableMap video_track_result = {};
+flutter::EncodableValue PlusPlayer::ParseVideoTrack(
+    plusplayer_track video_track) {
+  flutter::EncodableMap video_track_result = {};
   video_track_result.insert_or_assign(flutter::EncodableValue("trackType"),
                                       flutter::EncodableValue("video"));
   video_track_result.insert_or_assign(
@@ -476,12 +479,12 @@ bool PlusPlayer::SetDisplay() {
       "%d, height : %d, birate : %d",
       video_track.index, video_track.mimetype, video_track.width,
       video_track.height, video_track.bitrate);
-   return flutter::EncodableValue(video_track_result);
- }
+  return flutter::EncodableValue(video_track_result);
+}
 
- flutter::EncodableValue PlusPlayer::ParseAudioTrack(
-  plusplayer_track audio_track) {
-   flutter::EncodableMap audio_track_result = {};
+flutter::EncodableValue PlusPlayer::ParseAudioTrack(
+    plusplayer_track audio_track) {
+  flutter::EncodableMap audio_track_result = {};
   audio_track_result.insert_or_assign(flutter::EncodableValue("trackType"),
                                       flutter::EncodableValue("audio"));
   audio_track_result.insert_or_assign(
@@ -503,15 +506,14 @@ bool PlusPlayer::SetDisplay() {
       "[PlusPlayer] audio track info : trackId : %d, mimetype : %s, "
       "language_code : "
       "%s, channel : %d, bitrate : %d",
-      audio_track.index, audio_track.mimetype,
-      audio_track.language_code, audio_track.channels,
-      audio_track.bitrate);
-   return flutter::EncodableValue(audio_track_result);
- }
+      audio_track.index, audio_track.mimetype, audio_track.language_code,
+      audio_track.channels, audio_track.bitrate);
+  return flutter::EncodableValue(audio_track_result);
+}
 
- flutter::EncodableValue PlusPlayer::ParseSubtitleTrack(
-  plusplayer_track subtitle_track) {
-   flutter::EncodableMap subtitle_track_result = {};
+flutter::EncodableValue PlusPlayer::ParseSubtitleTrack(
+    plusplayer_track subtitle_track) {
+  flutter::EncodableMap subtitle_track_result = {};
   subtitle_track_result.insert_or_assign(flutter::EncodableValue("trackType"),
                                          flutter::EncodableValue("text"));
   subtitle_track_result.insert_or_assign(
@@ -528,118 +530,124 @@ bool PlusPlayer::SetDisplay() {
       "language_code : %s",
       subtitle_track.index, subtitle_track.mimetype,
       subtitle_track.language_code);
-   return flutter::EncodableValue(subtitle_track_result);
- }
-
-flutter::EncodableList PlusPlayer::GetTrackInfo(std::string track_type) {
-    if (!player_) {
-      LOG_ERROR("[PlusPlayer] Player not created.");
-      return {};
-    }
-
-    plusplayer_state state = plusplayer_get_state(player_);
-    if (state < plusplayer_state::PLUSPLAYER_STATE_TRACK_SOURCE_READY) {
-      LOG_ERROR("[PlusPlayer] Player is in invalid state.");
-      return {};
-    }
-
-    plusplayer_track_type type = ConvertTrackType(track_type);
-
-    int track_count = 0;
-    plusplayer_get_track_count(player_, type, &track_count);
-    if (track_count <= 0) {
-      return {};
-    }
-
-    int track_info_count = 0;
-    plusplayer_track* track_info = plusplayer_get_track_info(player_, track_info_count);
-    if (!track_info) {
-      return {};
-    }
-
-    flutter::EncodableList trackSelections = {};
-    if (type == plusplayer_track_type::PLUSPLAYER_TRACK_TYPE_VIDEO) {
-      LOG_INFO("[PlusPlayer] Video track count: %d", track_count);
-      for (size_t i = 0; i < track_count; i++) {
-        auto track = track_info[i];
-        if (track.type == plusplayer_track_type::PLUSPLAYER_TRACK_TYPE_VIDEO) {
-          trackSelections.push_back(ParseVideoTrack(track));
-        }
-      }
-    } else if (type == plusplayer_track_type::PLUSPLAYER_TRACK_TYPE_AUDIO) {
-      LOG_INFO("[PlusPlayer] Audio track count: %d", track_count);
-      for (size_t i = 0; i < track_count; i++) {
-        auto track = track_info[i];
-        if (track.type == plusplayer_track_type::PLUSPLAYER_TRACK_TYPE_AUDIO) {
-          trackSelections.push_back(ParseAudioTrack(track));
-        }
-      }
-    } else if (type == plusplayer_track_type::PLUSPLAYER_TRACK_TYPE_SUBTITLE) {
-      LOG_INFO("[PlusPlayer] Subtitle track count: %d", track_count);
-      for (size_t i = 0; i < track_count; i++) {
-        auto track = track_info[i];
-        if (track.type == plusplayer_track_type::PLUSPLAYER_TRACK_TYPE_SUBTITLE) {
-          trackSelections.push_back(
-              flutter::EncodableValue(ParseSubtitleTrack(track)));
-        }
-      }
-    }
-
-    return trackSelections;
+  return flutter::EncodableValue(subtitle_track_result);
 }
 
-flutter::EncodableList PlusPlayer::GetActiveTrackInfo() {
-    if (!player_) {
-      LOG_ERROR("[PlusPlayer] Player not created.");
-      return {};
-    }
+flutter::EncodableList PlusPlayer::GetTrackInfo(std::string track_type) {
+  if (!player_) {
+    LOG_ERROR("[PlusPlayer] Player not created.");
+    return {};
+  }
 
-    plusplayer_state state = plusplayer_get_state(player_);
-    if (state < plusplayer_state::PLUSPLAYER_STATE_TRACK_SOURCE_READY) {
-      LOG_ERROR("[PlusPlayer] Player is in invalid state.");
-      return {};
-    }
+  plusplayer_state state = plusplayer_get_state(player_);
+  if (state < plusplayer_state::PLUSPLAYER_STATE_TRACK_SOURCE_READY) {
+    LOG_ERROR("[PlusPlayer] Player is in invalid state.");
+    return {};
+  }
 
-    int track_count;
-    plusplayer_track* track_info = plusplayer_get_active_track_info(player_, track_count);
+  plusplayer_track_type type = ConvertTrackType(track_type);
 
-    if (!track_info) {
-      return {};
-    }
+  int track_count = 0;
+  plusplayer_get_track_count(player_, type, &track_count);
+  if (track_count <= 0) {
+    return {};
+  }
 
-    flutter::EncodableList active_tracks = {};
+  int track_info_count = 0;
+  plusplayer_track *track_info =
+      plusplayer_get_track_info(player_, track_info_count);
+  if (!track_info) {
+    return {};
+  }
+
+  flutter::EncodableList trackSelections = {};
+  if (type == plusplayer_track_type::PLUSPLAYER_TRACK_TYPE_VIDEO) {
+    LOG_INFO("[PlusPlayer] Video track count: %d", track_count);
     for (size_t i = 0; i < track_count; i++) {
       auto track = track_info[i];
       if (track.type == plusplayer_track_type::PLUSPLAYER_TRACK_TYPE_VIDEO) {
-        active_tracks.push_back(ParseVideoTrack(track));
-      } else if (track.type == plusplayer_track_type::PLUSPLAYER_TRACK_TYPE_AUDIO) {
-        active_tracks.push_back(ParseAudioTrack(track));
-      } else if (track.type == plusplayer_track_type::PLUSPLAYER_TRACK_TYPE_SUBTITLE) {
-        active_tracks.push_back(ParseSubtitleTrack(track));
+        trackSelections.push_back(ParseVideoTrack(track));
       }
     }
-    return active_tracks;
+  } else if (type == plusplayer_track_type::PLUSPLAYER_TRACK_TYPE_AUDIO) {
+    LOG_INFO("[PlusPlayer] Audio track count: %d", track_count);
+    for (size_t i = 0; i < track_count; i++) {
+      auto track = track_info[i];
+      if (track.type == plusplayer_track_type::PLUSPLAYER_TRACK_TYPE_AUDIO) {
+        trackSelections.push_back(ParseAudioTrack(track));
+      }
+    }
+  } else if (type == plusplayer_track_type::PLUSPLAYER_TRACK_TYPE_SUBTITLE) {
+    LOG_INFO("[PlusPlayer] Subtitle track count: %d", track_count);
+    for (size_t i = 0; i < track_count; i++) {
+      auto track = track_info[i];
+      if (track.type == plusplayer_track_type::PLUSPLAYER_TRACK_TYPE_SUBTITLE) {
+        trackSelections.push_back(
+            flutter::EncodableValue(ParseSubtitleTrack(track)));
+      }
+    }
+  }
+
+  return trackSelections;
+}
+
+flutter::EncodableList PlusPlayer::GetActiveTrackInfo() {
+  if (!player_) {
+    LOG_ERROR("[PlusPlayer] Player not created.");
+    return {};
+  }
+
+  plusplayer_state state = plusplayer_get_state(player_);
+  if (state < plusplayer_state::PLUSPLAYER_STATE_TRACK_SOURCE_READY) {
+    LOG_ERROR("[PlusPlayer] Player is in invalid state.");
+    return {};
+  }
+
+  int track_count;
+  plusplayer_track *track_info =
+      plusplayer_get_active_track_info(player_, track_count);
+
+  if (!track_info) {
+    return {};
+  }
+
+  flutter::EncodableList active_tracks = {};
+  for (size_t i = 0; i < track_count; i++) {
+    auto track = track_info[i];
+    if (track.type == plusplayer_track_type::PLUSPLAYER_TRACK_TYPE_VIDEO) {
+      active_tracks.push_back(ParseVideoTrack(track));
+    } else if (track.type ==
+               plusplayer_track_type::PLUSPLAYER_TRACK_TYPE_AUDIO) {
+      active_tracks.push_back(ParseAudioTrack(track));
+    } else if (track.type ==
+               plusplayer_track_type::PLUSPLAYER_TRACK_TYPE_SUBTITLE) {
+      active_tracks.push_back(ParseSubtitleTrack(track));
+    }
+  }
+  return active_tracks;
 }
 
 bool PlusPlayer::SetTrackSelection(int32_t track_id, std::string track_type) {
-    LOG_INFO("[PlusPlayer] Track id is: %d,track type is: %s", track_id,
-             track_type.c_str());
+  LOG_INFO("[PlusPlayer] Track id is: %d,track type is: %s", track_id,
+           track_type.c_str());
 
-    if (!player_) {
-      LOG_ERROR("[PlusPlayer] Player not created.");
-      return false;
-    }
+  if (!player_) {
+    LOG_ERROR("[PlusPlayer] Player not created.");
+    return false;
+  }
 
-    plusplayer_state state = plusplayer_get_state(player_);
-    if (state < plusplayer_state::PLUSPLAYER_STATE_TRACK_SOURCE_READY) {
-      LOG_ERROR("[PlusPlayer] Player is in invalid state.");
-      return false;
-    }
+  plusplayer_state state = plusplayer_get_state(player_);
+  if (state < plusplayer_state::PLUSPLAYER_STATE_TRACK_SOURCE_READY) {
+    LOG_ERROR("[PlusPlayer] Player is in invalid state.");
+    return false;
+  }
 
-    if (plusplayer_select_track(player_, ConvertTrackType(track_type), track_id) != plusplayer_error_type::PLUSPLAYER_ERROR_TYPE_NONE) {
-      LOG_ERROR("[PlusPlayer] Player fail to select track.");
-      return false;
-    }
+  if (plusplayer_select_track(player_, ConvertTrackType(track_type),
+                              track_id) !=
+      plusplayer_error_type::PLUSPLAYER_ERROR_TYPE_NONE) {
+    LOG_ERROR("[PlusPlayer] Player fail to select track.");
+    return false;
+  }
   return true;
 }
 
@@ -673,10 +681,8 @@ bool PlusPlayer::SetDrm(const std::string &uri, int drm_type,
   Property property;
   property.handle = drm_handle;
   property.type = type;
-  property.license_acquired_cb =
-      reinterpret_cast<void*>(OnLicenseAcquired);
-  property.license_acquired_userdata =
-      reinterpret_cast<void*>(this);
+  property.license_acquired_cb = reinterpret_cast<void *>(OnLicenseAcquired);
+  property.license_acquired_userdata = reinterpret_cast<void *>(this);
   property.external_decryption = false;
   plusplayer_set_drm(player_, property);
 
@@ -697,20 +703,21 @@ bool PlusPlayer::SetDrm(const std::string &uri, int drm_type,
 
 std::string PlusPlayer::GetStreamingProperty(
     const std::string &streaming_property_type) {
-    if (!player_) {
-      LOG_ERROR("[PlusPlayer] Player not created.");
-      return "";
-    }
-    plusplayer_state state = plusplayer_get_state(player_);
-    if (state == plusplayer_state::PLUSPLAYER_STATE_NONE || state ==
-    plusplayer_state::PLUSPLAYER_STATE_IDLE) {
-      LOG_ERROR("[PlusPlayer]:Player is in invalid state[%d]", state);
-      return "";
-    }
+  if (!player_) {
+    LOG_ERROR("[PlusPlayer] Player not created.");
+    return "";
+  }
+  plusplayer_state state = plusplayer_get_state(player_);
+  if (state == plusplayer_state::PLUSPLAYER_STATE_NONE ||
+      state == plusplayer_state::PLUSPLAYER_STATE_IDLE) {
+    LOG_ERROR("[PlusPlayer]:Player is in invalid state[%d]", state);
+    return "";
+  }
 
-    const char* streaming_property_value = plusplayer_get_streaming_property(player_, streaming_property_type.c_str());
-    std::string streaming_property_result(streaming_property_value);
-    return streaming_property_result;
+  const char *streaming_property_value = plusplayer_get_streaming_property(
+      player_, streaming_property_type.c_str());
+  std::string streaming_property_result(streaming_property_value);
+  return streaming_property_result;
 }
 
 bool PlusPlayer::SetBufferConfig(const std::string &key, int64_t value) {
@@ -731,20 +738,19 @@ bool PlusPlayer::SetBufferConfig(const std::string &key, int64_t value) {
 
 void PlusPlayer::SetStreamingProperty(const std::string &type,
                                       const std::string &value) {
-    if (!player_) {
-      LOG_ERROR("[PlusPlayer] Player not created.");
-      return;
-    }
-    plusplayer_state state = plusplayer_get_state(player_);
-    if (state == plusplayer_state::PLUSPLAYER_STATE_NONE) {
-      LOG_ERROR("[PlusPlayer] Player is in invalid state[%d]", state);
-      return;
-    }
+  if (!player_) {
+    LOG_ERROR("[PlusPlayer] Player not created.");
+    return;
+  }
+  plusplayer_state state = plusplayer_get_state(player_);
+  if (state == plusplayer_state::PLUSPLAYER_STATE_NONE) {
+    LOG_ERROR("[PlusPlayer] Player is in invalid state[%d]", state);
+    return;
+  }
 
-    LOG_INFO("[PlusPlayer] SetStreamingProp: type[%s], value[%s]",
-    type.c_str(),
-             value.c_str());
-    plusplayer_set_streaming_property(player_, type.c_str(), value.c_str());
+  LOG_INFO("[PlusPlayer] SetStreamingProp: type[%s], value[%s]", type.c_str(),
+           value.c_str());
+  plusplayer_set_streaming_property(player_, type.c_str(), value.c_str());
 }
 
 bool PlusPlayer::SetDisplayRotate(int64_t rotation) {
@@ -797,13 +803,13 @@ bool PlusPlayer::StopAndClose() {
   }
 
   if (plusplayer_stop(player_) !=
-  plusplayer_error_type::PLUSPLAYER_ERROR_TYPE_NONE) {
+      plusplayer_error_type::PLUSPLAYER_ERROR_TYPE_NONE) {
     LOG_ERROR("[PlusPlayer] Player fail to stop.");
     return false;
   }
 
   if (plusplayer_close(player_) !=
-  plusplayer_error_type::PLUSPLAYER_ERROR_TYPE_NONE) {
+      plusplayer_error_type::PLUSPLAYER_ERROR_TYPE_NONE) {
     LOG_ERROR("[PlusPlayer] Player fail to close.");
     return false;
   }
@@ -1100,8 +1106,7 @@ flutter::EncodableMap PlusPlayer::GetData(const flutter::EncodableList &data) {
 }
 
 bool PlusPlayer::OnLicenseAcquired(int *drm_handle, unsigned int length,
-                                   unsigned char *pssh_data, void *user_data)
-                                   {
+                                   unsigned char *pssh_data, void *user_data) {
   LOG_INFO("[PlusPlayer] License acquired.");
   PlusPlayer *self = static_cast<PlusPlayer *>(user_data);
 
@@ -1284,7 +1289,8 @@ std::string GetErrorMessage(plusplayer_error_type error_code) {
       return "Invalid operation";
     case plusplayer_error_type::PLUSPLAYER_ERROR_TYPE_FILE_NO_SPACE_ON_DEVICE:
       return "No space left on the device";
-    case plusplayer_error_type::PLUSPLAYER_ERROR_TYPE_FEATURE_NOT_SUPPORTED_ON_DEVICE:
+    case plusplayer_error_type::
+        PLUSPLAYER_ERROR_TYPE_FEATURE_NOT_SUPPORTED_ON_DEVICE:
       return "Not supported file on this device";
     case plusplayer_error_type::PLUSPLAYER_ERROR_TYPE_SEEK_FAILED:
       return "Seek operation failure";
@@ -1341,8 +1347,7 @@ std::string GetErrorMessage(plusplayer_error_type error_code) {
   }
 }
 
-void PlusPlayer::OnError(plusplayer_error_type error_code,
-                         void *user_data) {
+void PlusPlayer::OnError(plusplayer_error_type error_code, void *user_data) {
   LOG_ERROR("[PlusPlayer] Error code: %d", error_code);
   PlusPlayer *self = reinterpret_cast<PlusPlayer *>(user_data);
 
@@ -1365,8 +1370,8 @@ void PlusPlayer::OnDrmInitData(int *drm_handle, unsigned int len,
   PlusPlayer *self = reinterpret_cast<PlusPlayer *>(user_data);
 
   if (self->drm_manager_) {
-    if (self->drm_manager_->SecurityInitCompleteCB(drm_handle, len,
-    pssh_data, nullptr)) {
+    if (self->drm_manager_->SecurityInitCompleteCB(drm_handle, len, pssh_data,
+                                                   nullptr)) {
       plusplayer_drm_license_acquired_done(self->player_, type);
     }
   }

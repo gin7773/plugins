@@ -68,11 +68,12 @@ class PlusPlayer : public VideoPlayer {
   // void RegisterListener();
   void RegisterCallback();
   bool StopAndClose();
-  // bool RestorePlayer(const CreateMessage *restore_message, int64_t resume_time);
+  // bool RestorePlayer(const CreateMessage *restore_message, int64_t
+  // resume_time);
 
   static bool OnLicenseAcquired(int *drm_handle, unsigned int length,
                                 unsigned char *pssh_data, void *user_data);
-  //static void OnPrepareDone(bool ret, void *user_data);
+  // static void OnPrepareDone(bool ret, void *user_data);
   static void OnBufferStatus(int percent, void *user_data);
   static void OnSeekDone(void *user_data);
   static void OnEos(void *user_data);
@@ -91,13 +92,13 @@ class PlusPlayer : public VideoPlayer {
   // static void OnAdaptiveStreamingControlEvent(
   //     const plusplayer::StreamingMessageType &type,
   //     const plusplayer::MessageParam &msg, void *user_data);
-  // static void OnClosedCaptionData(std::unique_ptr<char[]> data, const int size,  void *user_data);
-  // static void OnCueEvent(const char *cue_data, void *user_data);
-  // static void OnDateRangeEvent(const char *date_range_data, void *user_data);
-  // static void OnStopReachEvent(bool stop_reach, void *user_data);
-  // static void OnCueOutContEvent(const char *cue_out_cont_data, void *user_data);
-  // static void OnChangeSourceDone(bool ret, void *user_data);
-  // static void OnStateChangedToPlaying(void *user_data);
+  // static void OnClosedCaptionData(std::unique_ptr<char[]> data, const int
+  // size,  void *user_data); static void OnCueEvent(const char *cue_data, void
+  // *user_data); static void OnDateRangeEvent(const char *date_range_data, void
+  // *user_data); static void OnStopReachEvent(bool stop_reach, void
+  // *user_data); static void OnCueOutContEvent(const char *cue_out_cont_data,
+  // void *user_data); static void OnChangeSourceDone(bool ret, void
+  // *user_data); static void OnStateChangedToPlaying(void *user_data);
 
   static void PrepareAsyncDone(bool ret, void *user_data);
 
