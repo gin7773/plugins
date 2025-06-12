@@ -60,56 +60,50 @@ class PlusPlayer : public VideoPlayer {
   //   bool IsLive();
   //   std::pair<int64_t, int64_t> GetLiveDuration();
   bool SetDisplay();
-  //   bool SetDrm(const std::string &uri, int drm_type,
-  //               const std::string &license_server_url);
-  //   flutter::EncodableValue ParseVideoTrack(plusplayer::Track video_track);
-  //   flutter::EncodableValue ParseAudioTrack(plusplayer::Track audio_track);
-  //   flutter::EncodableValue ParseSubtitleTrack(plusplayer::Track
-  //   subtitle_track);
-  //  void RegisterListener();
-  //   bool StopAndClose();
-  //   bool RestorePlayer(const CreateMessage *restore_message, int64_t
-  //   resume_time);
+  bool SetDrm(const std::string &uri, int drm_type,
+              const std::string &license_server_url);
+  flutter::EncodableValue ParseVideoTrack(plusplayer_track video_track);
+  flutter::EncodableValue ParseAudioTrack(plusplayer_track audio_track);
+  flutter::EncodableValue ParseSubtitleTrack(plusplayer_track subtitle_track);
+  // void RegisterListener();
+  void RegisterCallback();
+  bool StopAndClose();
+  // bool RestorePlayer(const CreateMessage *restore_message, int64_t resume_time);
 
-  //   static bool OnLicenseAcquired(int *drm_handle, unsigned int length,
-  //                                 unsigned char *pssh_data, void *user_data);
-  //   static void OnPrepareDone(bool ret, void *user_data);
-  //   static void OnBufferStatus(const int percent, void *user_data);
-  //   static void OnSeekDone(void *user_data);
-  //   static void OnEos(void *user_data);
-  //   static void OnSubtitleData(char *data, const int size,
-  //                              const plusplayer::SubtitleType &type,
-  //                              const uint64_t duration,
-  //                              plusplayer::SubtitleAttributeListPtr
-  //                              attr_list, void *user_data);
-  //   static void OnResourceConflicted(void *user_data);
-  //   static void OnError(const plusplayer::ErrorType &error_code, void
-  //   *user_data); static void OnErrorMsg(const plusplayer::ErrorType
-  //   &error_code,
-  //                          const char *error_msg, void *user_data);
-  //   static void OnDrmInitData(int *drm_andle, unsigned int len,
-  //                             unsigned char *pssh_data,
-  //                             plusplayer::TrackType type, void *user_data);
-  //   static void OnAdaptiveStreamingControlEvent(
-  //       const plusplayer::StreamingMessageType &type,
-  //       const plusplayer::MessageParam &msg, void *user_data);
-  //   static void OnClosedCaptionData(std::unique_ptr<char[]> data, const int
-  //   size,
-  //                                   void *user_data);
-  //   static void OnCueEvent(const char *cue_data, void *user_data);
-  //   static void OnDateRangeEvent(const char *date_range_data, void
-  //   *user_data); static void OnStopReachEvent(bool stop_reach, void
-  //   *user_data); static void OnCueOutContEvent(const char *cue_out_cont_data,
-  //   void *user_data); static void OnChangeSourceDone(bool ret, void
-  //   *user_data); static void OnStateChangedToPlaying(void *user_data);
+  static bool OnLicenseAcquired(int *drm_handle, unsigned int length,
+                                unsigned char *pssh_data, void *user_data);
+  //static void OnPrepareDone(bool ret, void *user_data);
+  static void OnBufferStatus(int percent, void *user_data);
+  static void OnSeekDone(void *user_data);
+  static void OnEos(void *user_data);
+  // static void OnSubtitleData(char *data, const int size,
+  //                            const plusplayer::SubtitleType &type,
+  //                            const uint64_t duration,
+  //                            plusplayer::SubtitleAttributeListPtr
+  //                            attr_list, void *user_data);
+  static void OnResourceConflicted(void *user_data);
+  static void OnError(plusplayer_error_type error_code, void *user_data);
+  // static void OnErrorMsg(const plusplayer_error_type &error_code,
+  //                        const char *error_msg, void *user_data);
+  static void OnDrmInitData(int *drm_andle, unsigned int len,
+                            unsigned char *pssh_data,
+                            plusplayer_track_type type, void *user_data);
+  // static void OnAdaptiveStreamingControlEvent(
+  //     const plusplayer::StreamingMessageType &type,
+  //     const plusplayer::MessageParam &msg, void *user_data);
+  // static void OnClosedCaptionData(std::unique_ptr<char[]> data, const int size,  void *user_data);
+  // static void OnCueEvent(const char *cue_data, void *user_data);
+  // static void OnDateRangeEvent(const char *date_range_data, void *user_data);
+  // static void OnStopReachEvent(bool stop_reach, void *user_data);
+  // static void OnCueOutContEvent(const char *cue_out_cont_data, void *user_data);
+  // static void OnChangeSourceDone(bool ret, void *user_data);
+  // static void OnStateChangedToPlaying(void *user_data);
 
   static void PrepareAsyncDone(bool ret, void *user_data);
-  static void SeekDone(void *user_data);
-  static void Error(plusplayer_error_type error_code, void *user_data);
 
   plusplayer_handle player_ = nullptr;
   // PlusplayerListener listener_;
-  // std::unique_ptr<DrmManager> drm_manager_;
+  std::unique_ptr<DrmManager> drm_manager_;
   bool is_buffering_ = false;
   bool is_prebuffer_mode_ = false;
   SeekCompletedCallback on_seek_completed_;
