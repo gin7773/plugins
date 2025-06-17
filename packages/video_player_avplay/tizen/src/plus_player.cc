@@ -160,6 +160,15 @@ int64_t PlusPlayer::Create(const std::string &uri,
     LOG_ERROR("[PlusPlayer] Player fail to prepare.");
     return -1;
   }
+
+  std::string new_token = flutter_common::GetValue(create_message.player_options(), "token", std::string());
+  if (!new_token.empty()) {
+    LOG_INFO("[PlusPlayer] Update token: %s", new_token.c_str());
+    if (!UpdateToken(new_token)) {
+      LOG_ERROR("[PlusPlayer] Fail to update token.");
+    }
+  }
+
   return SetUpEventChannel();
 }
 

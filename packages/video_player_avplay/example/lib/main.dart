@@ -132,6 +132,9 @@ class _DashRomoteVideoState extends State<_DashRomoteVideo> {
     StreamingPropertyType.unwantedResolution: '1920X1080',
     StreamingPropertyType.unwantedFramerate: '60',
   };
+  final Map<String, dynamic> _playerOptions = <String, dynamic>{
+    'token': 'YWJyVHlwZT1CUi1BVkMtREFTSC'
+  };
 
   @override
   void initState() {
@@ -140,6 +143,7 @@ class _DashRomoteVideoState extends State<_DashRomoteVideo> {
       'https://dash.akamaized.net/dash264/TestCasesUHD/2b/11/MultiRate.mpd',
       formatHint: VideoFormat.dash,
       streamingProperty: _streamingProperties,
+      playerOptions: _playerOptions,
     );
 
     _controller.addListener(() {
