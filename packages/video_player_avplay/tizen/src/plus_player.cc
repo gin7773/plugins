@@ -81,6 +81,7 @@ void PlusPlayer::RegisterCallback() {
   plusplayer_set_seek_done_cb(player_, OnSeekDone, this);
   plusplayer_set_buffer_status_cb(player_, OnBufferStatus, this);
   plusplayer_set_drm_init_data_cb(player_, OnDrmInitData, this);
+  plusplayer_set_adaptive_streaming_control_event_cb(player_, OnAdaptiveStreamingControlEvent, this);
 }
 
 int64_t PlusPlayer::Create(const std::string &uri,
@@ -1377,24 +1378,24 @@ void PlusPlayer::OnDrmInitData(int *drm_handle, unsigned int len,
   }
 }
 
-// void PlusPlayer::OnAdaptiveStreamingControlEvent(
-//     const plusplayer::StreamingMessageType &type,
-//     const plusplayer::MessageParam &msg, void *user_data) {
-//   LOG_INFO("[PlusPlayer] Message type: %d, is DrmInitData (%d)", type,
-//            type == plusplayer::StreamingMessageType::kDrmInitData);
-//   PlusPlayer *self = reinterpret_cast<PlusPlayer *>(user_data);
+void PlusPlayer::OnAdaptiveStreamingControlEvent(
+    const plusplayer::StreamingMessageType &type,
+    const plusplayer::MessageParam &msg, void *user_data) {
+  LOG_INFO("[PlusPlayer] Message type: %d, is DrmInitData (%d)", type,
+           type == plusplayer::StreamingMessageType::kDrmInitData);
+  PlusPlayer *self = reinterpret_cast<PlusPlayer *>(user_data);
 
-//   if (type == plusplayer::StreamingMessageType::kDrmInitData) {
-//     if (msg.data.empty() || 0 == msg.size) {
-//       LOG_ERROR("[PlusPlayer] Empty message.");
-//       return;
-//     }
+  if (type == plusplayer::StreamingMessageType::kDrmInitData) {
+    if (msg.data.empty() || 0 == msg.size) {
+      LOG_ERROR("[PlusPlayer] Empty message.");
+      return;
+    }
 
-//     if (self->drm_manager_) {
-//       self->drm_manager_->UpdatePsshData(msg.data.data(), msg.size);
-//     }
-//   }
-// }
+    if (self->drm_manager_) {
+      self->drm_manager_->UpdatePsshData(msg.data.data(), msg.size);
+    }
+  }
+}
 
 // void PlusPlayer::OnClosedCaptionData(std::unique_ptr<char[]> data,
 //                                      const int size, void *user_data) {}
