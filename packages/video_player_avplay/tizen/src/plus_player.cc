@@ -81,7 +81,8 @@ void PlusPlayer::RegisterCallback() {
   plusplayer_set_seek_done_cb(player_, OnSeekDone, this);
   plusplayer_set_buffer_status_cb(player_, OnBufferStatus, this);
   plusplayer_set_drm_init_data_cb(player_, OnDrmInitData, this);
-  plusplayer_set_adaptive_streaming_control_event_cb(player_, OnAdaptiveStreamingControlEvent, this);
+  plusplayer_set_adaptive_streaming_control_event_cb(
+      player_, OnAdaptiveStreamingControlEvent, this);
 }
 
 int64_t PlusPlayer::Create(const std::string &uri,
@@ -186,7 +187,13 @@ void PlusPlayer::Dispose() {
 
 void PlusPlayer::SetDisplayRoi(int32_t x, int32_t y, int32_t width,
                                int32_t height) {
-  if (int ret = plusplayer_set_display_roi(player_, x, y, width, height) !=
+  plusplayer_geometry geo;
+  geo.x = x;
+  geo.y = y;
+  geo.w = width;
+  geo.h = height;
+
+  if (int ret = plusplayer_set_display_roi(player_, geo) !=
                 plusplayer_error_type::PLUSPLAYER_ERROR_TYPE_NONE) {
     LOG_ERROR("[PlusPlayer] Player fail to set display roi: %d.", ret);
   }
@@ -549,7 +556,7 @@ flutter::EncodableList PlusPlayer::GetTrackInfo(std::string track_type) {
   plusplayer_track_type type = ConvertTrackType(track_type);
 
   int track_count = 0;
-  plusplayer_get_track_count(player_, type, &track_count);
+  plusplayer_get_track_count(player_, type, track_count);
   if (track_count <= 0) {
     return {};
   }
@@ -679,7 +686,7 @@ bool PlusPlayer::SetDrm(const std::string &uri, int drm_type,
       break;
   }
 
-  Property property;
+  plusplayer_drm_property property;
   property.handle = drm_handle;
   property.type = type;
   property.license_acquired_cb = reinterpret_cast<void *>(OnLicenseAcquired);
@@ -1379,20 +1386,22 @@ void PlusPlayer::OnDrmInitData(int *drm_handle, unsigned int len,
 }
 
 void PlusPlayer::OnAdaptiveStreamingControlEvent(
-    const plusplayer::StreamingMessageType &type,
-    const plusplayer::MessageParam &msg, void *user_data) {
+    plusplayer_streaming_message_type &type, plusplayer_message_param &msg,
+    void *user_data) {
   LOG_INFO("[PlusPlayer] Message type: %d, is DrmInitData (%d)", type,
-           type == plusplayer::StreamingMessageType::kDrmInitData);
+           type == plusplayer_streaming_message_type::
+                       PLUSPLAYER_STREAMING_MESSAGE_TYPE_DRMINITDATA);
   PlusPlayer *self = reinterpret_cast<PlusPlayer *>(user_data);
 
-  if (type == plusplayer::StreamingMessageType::kDrmInitData) {
-    if (msg.data.empty() || 0 == msg.size) {
+  if (type == plusplayer_streaming_message_type::
+                  PLUSPLAYER_STREAMING_MESSAGE_TYPE_DRMINITDATA) {
+    if (msg.data == nullptr || 0 == msg.size) {
       LOG_ERROR("[PlusPlayer] Empty message.");
       return;
     }
 
     if (self->drm_manager_) {
-      self->drm_manager_->UpdatePsshData(msg.data.data(), msg.size);
+      self->drm_manager_->UpdatePsshData(msg.data, msg.size);
     }
   }
 }

@@ -90,8 +90,8 @@ class PlusPlayer : public VideoPlayer {
                             unsigned char *pssh_data,
                             plusplayer_track_type type, void *user_data);
   static void OnAdaptiveStreamingControlEvent(
-      const plusplayer::StreamingMessageType &type,
-      const plusplayer::MessageParam &msg, void *user_data);
+      plusplayer_streaming_message_type &type, plusplayer_message_param &msg,
+      void *user_data);
   // static void OnClosedCaptionData(std::unique_ptr<char[]> data, const int
   // size,  void *user_data); static void OnCueEvent(const char *cue_data, void
   // *user_data); static void OnDateRangeEvent(const char *date_range_data, void
