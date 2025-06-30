@@ -469,6 +469,7 @@ typedef void (*OnPlayerSubtitleData)(
     char* data, const int size, const plusplayer::SubtitleType& type,
     const uint64_t duration, plusplayer::SubtitleAttributeListPtr attr_list,
     void* user_data);
+typedef void (*OnPlayerADEventFromDash)(const char* ADData, void* user_data);
 
 struct PlusplayerListener {
   OnPlayerPrepared prepared_callback{nullptr};
@@ -490,6 +491,7 @@ struct PlusplayerListener {
   OnPlayerStateChangedToPlaying state_changed_to_playing_callback{nullptr};
   OnPlayerDrmType drm_type_callback{nullptr};
   OnPlayerSubtitleData subtitle_data_callback{nullptr};
+  OnPlayerADEventFromDash ad_event_callback{nullptr};
 };
 
 struct Plusplayer;

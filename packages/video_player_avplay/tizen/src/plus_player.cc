@@ -71,6 +71,7 @@ void PlusPlayer::RegisterListener() {
   listener_.subtitle_data_callback = OnSubtitleData;
   listener_.playing_callback = OnStateChangedToPlaying;
   listener_.resource_conflicted_callback = OnResourceConflicted;
+  listener_.ad_event_callback = OnADEventFromDash;
   ::RegisterListener(player_, &listener_, this);
 }
 
@@ -103,6 +104,7 @@ int64_t PlusPlayer::Create(const std::string &uri,
   create_message_ = create_message;
   LOG_INFO("[PlusPlayer] Uri: %s", uri.c_str());
 
+  SetStreamingProperty("UPDATE_SAME_LANGUAGE_CODE", "1");
   if (create_message.streaming_property() != nullptr &&
       !create_message.streaming_property()->empty()) {
     for (const auto &[key, value] : *create_message.streaming_property()) {
@@ -161,14 +163,6 @@ int64_t PlusPlayer::Create(const std::string &uri,
     return -1;
   }
 
-  std::string new_token = flutter_common::GetValue(create_message.player_options(), "token", std::string());
-  if (!new_token.empty()) {
-    LOG_INFO("[PlusPlayer] Update token: %s", new_token.c_str());
-    if (!UpdateToken(new_token)) {
-      LOG_ERROR("[PlusPlayer] Fail to update token.");
-    }
-  }
-
   return SetUpEventChannel();
 }
 
@@ -184,6 +178,7 @@ void PlusPlayer::SetDisplayRoi(int32_t x, int32_t y, int32_t width,
   roi.y = y;
   roi.w = width;
   roi.h = height;
+  LOG_INFO("******************roi: %d,%d,%d,%d*************", roi.x, roi.y, roi.w, roi.h);
   if (!::SetDisplayRoi(player_, roi)) {
     LOG_ERROR("[PlusPlayer] Player fail to set display roi.");
   }
@@ -1350,3 +1345,5 @@ void PlusPlayer::OnStateChangedToPlaying(void *user_data) {
   PlusPlayer *self = reinterpret_cast<PlusPlayer *>(user_data);
   self->SendIsPlayingState(true);
 }
+
+void PlusPlayer::OnADEventFromDash(const char *ad_data, void *user_data) {}

@@ -8,6 +8,7 @@ import 'package:flutter/widgets.dart';
 
 import '../video_player_platform_interface.dart';
 import 'messages.g.dart';
+import 'sub_rip.dart';
 import 'tracks.dart';
 
 /// An implementation of [VideoPlayerPlatform] that uses the
@@ -514,6 +515,9 @@ class VideoPlayerTizen extends VideoPlayerPlatform {
     StreamingPropertyType.audioStreamInfo: 'AUDIO_STREAM_INFO',
     StreamingPropertyType.subtitleStreamInfo: 'SUBTITLE_STREAM_INFO',
     StreamingPropertyType.videoStreamInfo: 'VIDEO_STREAM_INFO',
+    StreamingPropertyType.updateSameLanguageCode: 'UPDATE_SAME_LANGUAGE_CODE',
+    StreamingPropertyType.token: 'TOKEN',
+    StreamingPropertyType.openHttpHeader: 'OPEN_HTTP_HEADER',
   };
 
   static const Map<BufferConfigType, String> _bufferConfigTypeMap =

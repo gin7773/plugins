@@ -396,6 +396,15 @@ enum StreamingPropertyType {
 
   /// The video track info of the dash stream.
   videoStreamInfo,
+
+  /// If have same language code, will update the language code. '1' or others.
+  updateSameLanguageCode,
+
+  /// If you want to update token before dash-player prepare done, set this property.
+  token,
+
+  /// Whether to enable the function of obtaining http header. 'TRUE' or others.
+  openHttpHeader,
 }
 
 /// The different types of buffer configurations that can be set on the player.
