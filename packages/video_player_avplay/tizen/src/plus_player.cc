@@ -178,7 +178,6 @@ void PlusPlayer::SetDisplayRoi(int32_t x, int32_t y, int32_t width,
   roi.y = y;
   roi.w = width;
   roi.h = height;
-  LOG_INFO("******************roi: %d,%d,%d,%d*************", roi.x, roi.y, roi.w, roi.h);
   if (!::SetDisplayRoi(player_, roi)) {
     LOG_ERROR("[PlusPlayer] Player fail to set display roi.");
   }
