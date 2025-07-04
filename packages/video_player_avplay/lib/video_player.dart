@@ -438,27 +438,27 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     'dev.flutter.videoplayer.drm',
   );
 
-  Future<void> _checkPlatformAndApiVersion() async {
-    final DeviceInfoPluginTizen deviceInfoPlugin = DeviceInfoPluginTizen();
-    final TizenDeviceInfo deviceInfo = await deviceInfoPlugin.tizenInfo;
+  // Future<void> _checkPlatformAndApiVersion() async {
+  //   final DeviceInfoPluginTizen deviceInfoPlugin = DeviceInfoPluginTizen();
+  //   final TizenDeviceInfo deviceInfo = await deviceInfoPlugin.tizenInfo;
 
-    if ((deviceInfo.platformVersion != null &&
-            deviceInfo.platformVersion!.isNotEmpty) &&
-        apiVersion != 'none' &&
-        (deviceInfo.platformVersion != apiVersion)) {
-      throw Exception(
-        'The current TizenOS version(${deviceInfo.platformVersion}) '
-        'and the app API version($apiVersion) are different. '
-        'The avplay plugin does not guarantee compatibility with '
-        'other versions. Therefore, please set the "api-version" '
-        'in tizen-manifest.xml to match the TizenOS version and rebuild.',
-      );
-    }
-  }
+  //   if ((deviceInfo.platformVersion != null &&
+  //           deviceInfo.platformVersion!.isNotEmpty) &&
+  //       apiVersion != 'none' &&
+  //       (deviceInfo.platformVersion != apiVersion)) {
+  //     throw Exception(
+  //       'The current TizenOS version(${deviceInfo.platformVersion}) '
+  //       'and the app API version($apiVersion) are different. '
+  //       'The avplay plugin does not guarantee compatibility with '
+  //       'other versions. Therefore, please set the "api-version" '
+  //       'in tizen-manifest.xml to match the TizenOS version and rebuild.',
+  //     );
+  //   }
+  // }
 
   /// Attempts to open the given [dataSource] and load metadata about the video.
   Future<void> initialize() async {
-    await _checkPlatformAndApiVersion();
+    /// await _checkPlatformAndApiVersion();
 
     final bool allowBackgroundPlayback =
         videoPlayerOptions?.allowBackgroundPlayback ?? false;

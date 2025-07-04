@@ -22,3 +22,6 @@ USER_CPPFLAGS_MISC =
 USER_INC_DIRS = inc src
 USER_INC_FILES =
 USER_CPP_INC_FILES =
+
+# User Libraries
+USER_LIBS = plusplayer dashplusplayer
