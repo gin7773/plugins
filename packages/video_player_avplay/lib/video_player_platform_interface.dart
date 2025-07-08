@@ -506,6 +506,7 @@ class VideoEvent {
     this.text,
     this.isPlaying,
     this.subtitleAttributes,
+    this.adInfo,
   });
 
   /// The type of the event.
@@ -539,6 +540,11 @@ class VideoEvent {
   /// Attributes of the video subtitle.
   final List<dynamic>? subtitleAttributes;
 
+  /// The ad info from dash.
+  ///
+  /// Only used if [eventType] is [VideoEventType.adFromDash].
+  final Map<Object?, Object?>? adInfo;
+
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
@@ -548,7 +554,10 @@ class VideoEvent {
             duration == other.duration &&
             size == other.size &&
             buffered == other.buffered &&
-            text == other.text;
+            text == other.text &&
+            isPlaying == other.isPlaying &&
+            subtitleAttributes == other.subtitleAttributes &&
+            adInfo == other.adInfo;
   }
 
   @override
@@ -557,7 +566,10 @@ class VideoEvent {
       duration.hashCode ^
       size.hashCode ^
       buffered.hashCode ^
-      text.hashCode;
+      text.hashCode ^
+      isPlaying.hashCode ^
+      subtitleAttributes.hashCode ^
+      adInfo.hashCode;
 }
 
 /// Type of the event.
@@ -591,6 +603,9 @@ enum VideoEventType {
 
   /// The video need to restore player.
   restored,
+
+  /// The ad event from dash.
+  adFromDash,
 
   /// An unknown event has been received.
   unknown,

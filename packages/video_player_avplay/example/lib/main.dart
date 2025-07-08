@@ -151,6 +151,9 @@ class _DashRomoteVideoState extends State<_DashRomoteVideo> {
       if (_controller.value.hasError) {
         print(_controller.value.errorDescription);
       }
+      if (_controller.value.hasAdInfo) {
+        print(_controller.value.adInfo);
+      }
       setState(() {});
     });
     _controller.setLooping(true);
