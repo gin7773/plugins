@@ -1367,27 +1367,42 @@ void PlusPlayer::OnADEventFromDash(const char *ad_data, void *user_data) {
       const rapidjson::Value &data = event["data"];
 
       if (data.HasMember("id") && data["id"].IsInt64()) {
-        ad_info.insert_or_assign(flutter::EncodableValue("id"), flutter::EncodableValue(data["id"].GetInt64()));
+        ad_info.insert_or_assign(
+            flutter::EncodableValue("id"),
+            flutter::EncodableValue(data["id"].GetInt64()));
       }
 
-      if (data.HasMember("cancel_indicator") && data["cancel_indicator"].IsBool()) {
-        ad_info.insert_or_assign(flutter::EncodableValue("cancel_indicator"), flutter::EncodableValue(data["cancel_indicator"].GetBool()));
+      if (data.HasMember("cancel_indicator") &&
+          data["cancel_indicator"].IsBool()) {
+        ad_info.insert_or_assign(
+            flutter::EncodableValue("cancel_indicator"),
+            flutter::EncodableValue(data["cancel_indicator"].GetBool()));
       }
 
       if (data.HasMember("start_ms") && data["start_ms"].IsInt64()) {
-        ad_info.insert_or_assign(flutter::EncodableValue("start_ms"), flutter::EncodableValue(data["start_ms"].GetInt64()));
+        ad_info.insert_or_assign(
+            flutter::EncodableValue("start_ms"),
+            flutter::EncodableValue(data["start_ms"].GetInt64()));
       }
 
       if (data.HasMember("duration_ms") && data["duration_ms"].IsInt64()) {
-        ad_info.insert_or_assign(flutter::EncodableValue("duration_ms"), flutter::EncodableValue(data["duration_ms"].GetInt64()));
+        ad_info.insert_or_assign(
+            flutter::EncodableValue("duration_ms"),
+            flutter::EncodableValue(data["duration_ms"].GetInt64()));
       }
 
       if (data.HasMember("end_ms") && data["end_ms"].IsInt64()) {
-        ad_info.insert_or_assign(flutter::EncodableValue("end_ms"), flutter::EncodableValue(data["end_ms"].GetInt64()));
+        ad_info.insert_or_assign(
+            flutter::EncodableValue("end_ms"),
+            flutter::EncodableValue(data["end_ms"].GetInt64()));
       }
 
-      if (data.HasMember("out_of_network_indicator") && data["out_of_network_indicator"].IsInt64()) {
-        ad_info.insert_or_assign(flutter::EncodableValue("out_of_network_indicator"), flutter::EncodableValue(data["out_of_network_indicator"].GetInt64()));
+      if (data.HasMember("out_of_network_indicator") &&
+          data["out_of_network_indicator"].IsInt64()) {
+        ad_info.insert_or_assign(
+            flutter::EncodableValue("out_of_network_indicator"),
+            flutter::EncodableValue(
+                data["out_of_network_indicator"].GetInt64()));
       }
     }
 

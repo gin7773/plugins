@@ -199,8 +199,8 @@ void VideoPlayer::SendRestored() {
 
 void VideoPlayer::SendADFromDash(flutter::EncodableMap ad_info) {
   flutter::EncodableMap result = {
-    {flutter::EncodableValue("event"), flutter::EncodableValue("adFromDash")},
-    {flutter::EncodableValue("adInfo"), flutter::EncodableValue(ad_info)},
+      {flutter::EncodableValue("event"), flutter::EncodableValue("adFromDash")},
+      {flutter::EncodableValue("adInfo"), flutter::EncodableValue(ad_info)},
   };
   PushEvent(flutter::EncodableValue(result));
 }
