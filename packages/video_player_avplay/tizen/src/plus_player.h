@@ -62,14 +62,17 @@ class PlusPlayer : public VideoPlayer {
   bool SetDisplay();
   bool SetDrm(const std::string &uri, int drm_type,
               const std::string &license_server_url);
-  flutter::EncodableValue ParseVideoTrack(plusplayer_track video_track);
-  flutter::EncodableValue ParseAudioTrack(plusplayer_track audio_track);
-  flutter::EncodableValue ParseSubtitleTrack(plusplayer_track subtitle_track);
+  flutter::EncodableValue ParseVideoTrack(plusplayer_track_h video_track);
+  flutter::EncodableValue ParseAudioTrack(plusplayer_track_h audio_track);
+  flutter::EncodableValue ParseSubtitleTrack(plusplayer_track_h subtitle_track);
   // void RegisterListener();
   void RegisterCallback();
   bool StopAndClose();
   // bool RestorePlayer(const CreateMessage *restore_message, int64_t
   // resume_time);
+  static bool GetTrackVideo(const plusplayer_track_h track, void* user_data);
+  static bool GetTrackAudio(const plusplayer_track_h track, void* user_data);
+  static bool GetTrackSubtitle(const plusplayer_track_h track, void* user_data);
 
   static bool OnLicenseAcquired(int *drm_handle, unsigned int length,
                                 unsigned char *pssh_data, void *user_data);
@@ -83,14 +86,14 @@ class PlusPlayer : public VideoPlayer {
   //                            plusplayer::SubtitleAttributeListPtr
   //                            attr_list, void *user_data);
   static void OnResourceConflicted(void *user_data);
-  static void OnError(plusplayer_error_type error_code, void *user_data);
-  // static void OnErrorMsg(const plusplayer_error_type &error_code,
+  static void OnError(plusplayer_error_type_e error_code, void *user_data);
+  // static void OnErrorMsg(const plusplayer_error_type_e &error_code,
   //                        const char *error_msg, void *user_data);
   static void OnDrmInitData(int *drm_andle, unsigned int len,
                             unsigned char *pssh_data,
-                            plusplayer_track_type type, void *user_data);
+                            plusplayer_track_type_e type, void *user_data);
   static void OnAdaptiveStreamingControlEvent(
-      plusplayer_streaming_message_type &type, plusplayer_message_param &msg,
+      plusplayer_streaming_message_type_e type, plusplayer_message_param_s* msg,
       void *user_data);
   // static void OnClosedCaptionData(std::unique_ptr<char[]> data, const int
   // size,  void *user_data); static void OnCueEvent(const char *cue_data, void
