@@ -303,6 +303,16 @@ bool PlusPlayer::SetPlaybackSpeed(double speed) {
 }
 
 bool PlusPlayer::SeekTo(int64_t position, SeekCompletedCallback callback) {
+  memento_.reset(new plusplayer::PlayerMemento());
+  if (!GetMemento(player_, memento_.get())) {
+    LOG_ERROR("***seeking issue***Player fail to get memento.");
+    return false;
+  }
+  LOG_INFO(
+      "***seeking issue***Memento saved current player state: %d, position: %llu ms, "
+      "is_live: %d",
+      (int)memento_->state, memento_->playing_time, memento_->is_live);
+
   LOG_INFO("[PlusPlayer] Seek to position: %lld", position);
 
   if (GetState(player_) < plusplayer::State::kReady) {
@@ -356,6 +366,7 @@ std::pair<int64_t, int64_t> PlusPlayer::GetLiveDuration() {
   }
 
   std::vector<std::string> time_vec = split(live_duration_str, '|');
+  LOG_INFO("***seeking issue***live_duration_str is %s", live_duration_str.c_str());
   return std::make_pair(std::stoll(time_vec[0]), std::stoll(time_vec[1]));
 }
 
@@ -368,6 +379,7 @@ std::pair<int64_t, int64_t> PlusPlayer::GetDuration() {
       LOG_ERROR("[PlusPlayer] Player fail to get the duration.");
       return std::make_pair(0, 0);
     }
+    LOG_INFO("***seeking issue***duration is %lld", duration);
     return std::make_pair(0, duration);
   }
 }
