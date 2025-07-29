@@ -3,6 +3,8 @@
 // found in the LICENSE file.
 
 import 'package:flutter/foundation.dart' show immutable, objectRuntimeType;
+import 'package:flutter/material.dart';
+import 'package:outlined_text/outlined_text.dart';
 
 import 'sub_rip.dart';
 import 'web_vtt.dart';
@@ -44,6 +46,7 @@ class Caption {
     required this.end,
     required this.text,
     this.subtitleAttributes,
+    this.textStyle,
   });
 
   /// The number that this caption was assigned.
@@ -62,6 +65,114 @@ class Caption {
   /// The subtitile attributes associated with this caption.
   final List<SubtitleAttribute?>? subtitleAttributes;
 
+  /// Specifies how the text in the closed caption should look.
+  final TextStyle? textStyle;
+
+  /// Specifies the text's outline style.
+  /// final TextStyle textOutlineStyle = TextStyle();
+  /// final OutlinedTextStroke? textOutlineStyle;
+
+  static Color? _toColor(int colorValue) {
+    String hexValue = colorValue.toRadixString(16);
+    if (hexValue.length < 6) {
+      hexValue = hexValue.padLeft(6, '0');
+    }
+    if (hexValue.length == 6) {
+      hexValue = 'FF$hexValue';
+    }
+    if (hexValue.length == 8) {
+      return Color(int.parse('0x$hexValue'));
+    }
+    return null;
+  }
+
+  static FontWeight _toWeight(int weightValue) {
+    return weightValue == 0 ? FontWeight.normal : FontWeight.bold;
+  }
+
+  static FontStyle _toStyle(int styleValue) {
+    return styleValue == 0 ? FontStyle.normal : FontStyle.italic;
+  }
+
+  /// Specifies the text style according to subtitle attributes.
+  static TextStyle? specifyTextStyle(
+      List<SubtitleAttribute> subtitleAttributes) {
+    TextStyle actualTextStyle = const TextStyle();
+    for (final SubtitleAttribute attr in subtitleAttributes) {
+      print('-----------$attr------------------');
+      switch (attr.attrType) {
+        case SubtitleAttrType.subAttrFontFamily:
+          actualTextStyle =
+              actualTextStyle.copyWith(fontFamily: attr.attrValue as String);
+        case SubtitleAttrType.subAttrFontSize:
+          break;
+        // actualTextStyle =
+        //     actualTextStyle.copyWith(fontSize: attr.attrValue as double);
+        case SubtitleAttrType.subAttrFontWeight:
+          actualTextStyle = actualTextStyle.copyWith(
+              fontWeight: _toWeight(attr.attrValue as int));
+        case SubtitleAttrType.subAttrFontStyle:
+          actualTextStyle = actualTextStyle.copyWith(
+              fontStyle: _toStyle(attr.attrValue as int));
+        case SubtitleAttrType.subAttrFontColor:
+          if (actualTextStyle.foreground == null) {
+            actualTextStyle = actualTextStyle.copyWith(
+                color: _toColor(attr.attrValue as int));
+          }
+        case SubtitleAttrType.subAttrFontBgColor:
+          if (actualTextStyle.background == null) {
+            actualTextStyle = actualTextStyle.copyWith(
+                backgroundColor: _toColor(attr.attrValue as int));
+          }
+        case SubtitleAttrType.subAttrFontOpacity:
+          actualTextStyle = actualTextStyle.copyWith(
+              color:
+                  actualTextStyle.color!.withOpacity(attr.attrValue as double));
+        case SubtitleAttrType.subAttrFontBgOpacity:
+          actualTextStyle = actualTextStyle.copyWith(
+              backgroundColor: actualTextStyle.backgroundColor!
+                  .withOpacity(attr.attrValue as double));
+        case SubtitleAttrType.subAttrFontTextOutlineColor:
+        case SubtitleAttrType.subAttrFontTextOutlineThickness:
+        case SubtitleAttrType.subAttrFontTextOutlineBlurRadius:
+          // actualTextStyle = actualTextStyle.copyWith(shadows: <Shadow>[
+          //   const Shadow(color: Colors.green, offset: Offset(1, 1))
+          // ]);
+          break;
+        case SubtitleAttrType.subAttrRegionXPos:
+        case SubtitleAttrType.subAttrRegionYPos:
+        case SubtitleAttrType.subAttrRegionWidth:
+        case SubtitleAttrType.subAttrRegionHeight:
+        case SubtitleAttrType.subAttrWindowXPadding:
+        case SubtitleAttrType.subAttrWindowYPadding:
+        case SubtitleAttrType.subAttrWindowLeftMargin:
+        case SubtitleAttrType.subAttrWindowRightMargin:
+        case SubtitleAttrType.subAttrWindowTopMargin:
+        case SubtitleAttrType.subAttrWindowBottomMargin:
+        case SubtitleAttrType.subAttrWindowBgColor:
+        case SubtitleAttrType.subAttrWindowOpacity:
+        case SubtitleAttrType.subAttrWindowShowBg:
+        case SubtitleAttrType.subAttrFontVerticalAlign:
+        case SubtitleAttrType.subAttrFontHorizontalAlign:
+        case SubtitleAttrType.subAttrRawSubtitle:
+        case SubtitleAttrType.subAttrWebvttCueLine:
+        case SubtitleAttrType.subAttrWebvttCueLineNum:
+        case SubtitleAttrType.subAttrWebvttCueLineAlign:
+        case SubtitleAttrType.subAttrWebvttCueAlign:
+        case SubtitleAttrType.subAttrWebvttCueSize:
+        case SubtitleAttrType.subAttrWebvttCuePosition:
+        case SubtitleAttrType.subAttrWebvttCuePositionAlign:
+        case SubtitleAttrType.subAttrWebvttCueVertical:
+        case SubtitleAttrType.subAttrTimestamp:
+        case SubtitleAttrType.subAttrExtsubInde:
+        case SubtitleAttrType.subAttrTypeNone:
+          break;
+      }
+    }
+    print("********$actualTextStyle*************");
+    return actualTextStyle == const TextStyle() ? null : actualTextStyle;
+  }
+
   /// A no caption object. This is a caption with [start] and [end] durations of zero,
   /// and an empty [text] string.
   static const Caption none = Caption(
@@ -79,7 +190,8 @@ class Caption {
         'start: $start, '
         'end: $end, '
         'text: $text, '
-        'subtitleAttributes: $subtitleAttributes)';
+        'subtitleAttributes: $subtitleAttributes, '
+        'textStyle: $textStyle)';
   }
 
   @override
@@ -91,10 +203,12 @@ class Caption {
           start == other.start &&
           end == other.end &&
           text == other.text &&
-          subtitleAttributes == other.subtitleAttributes;
+          subtitleAttributes == other.subtitleAttributes &&
+          textStyle == other.textStyle;
 
   @override
-  int get hashCode => Object.hash(number, start, end, text, subtitleAttributes);
+  int get hashCode =>
+      Object.hash(number, start, end, text, subtitleAttributes, textStyle);
 }
 
 /// The different types of subtitle attributes that can be set on the player.

@@ -23,7 +23,7 @@
             "rule_name": "AVG"
         },
         "advertisement": {
-            "SCTE35": false
+            "SCTE35": true
         }
     },
     "accessibility": {

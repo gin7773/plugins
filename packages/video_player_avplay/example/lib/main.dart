@@ -142,14 +142,22 @@ class _DashRomoteVideoState extends State<_DashRomoteVideo> {
   void initState() {
     super.initState();
     _controller = VideoPlayerController.network(
-      'https://dash.akamaized.net/dash264/TestCasesUHD/2b/11/MultiRate.mpd',
+      //'https://dash.akamaized.net/dash264/TestCasesUHD/2b/11/MultiRate.mpd',
+      'http://109.123.95.136/tsy/vxttoken=TJDaW1pJTNBYjA4YmE/testpic_2s/multi_subs_sidecar.mpd',
+      //'http://109.123.95.136/tsy/vxttoken=TJDaW1pJTNBYjA4YmE/testpic_2s/multi_subs.mpd',
       formatHint: VideoFormat.dash,
-      streamingProperty: _streamingProperties,
+      // streamingProperty: _streamingProperties,
     );
 
     _controller.addListener(() {
       if (_controller.value.hasError) {
         print(_controller.value.errorDescription);
+      }
+      if (_controller.value.hasAdInfo) {
+        print(_controller.value.adInfo);
+      }
+      if (_controller.value.hasTextStyle) {
+        print(_controller.value.caption.textStyle);
       }
       setState(() {});
     });
@@ -190,7 +198,9 @@ class _DashRomoteVideoState extends State<_DashRomoteVideo> {
                 alignment: Alignment.bottomCenter,
                 children: <Widget>[
                   VideoPlayer(_controller),
-                  ClosedCaption(text: _controller.value.caption.text),
+                  ClosedCaption(
+                      text: _controller.value.caption.text,
+                      textStyle: _controller.value.caption.textStyle),
                   _ControlsOverlay(controller: _controller),
                   VideoProgressIndicator(_controller, allowScrubbing: true),
                 ],

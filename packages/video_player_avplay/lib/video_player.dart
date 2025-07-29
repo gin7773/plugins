@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_tizen/flutter_tizen.dart';
 
+import 'src/ad_info_from_dash.dart';
 import 'src/closed_caption_file.dart';
 import 'src/drm_configs.dart';
 import 'src/hole.dart';
@@ -63,6 +64,7 @@ class VideoPlayerValue {
     this.playbackSpeed = 1.0,
     this.errorDescription,
     this.isCompleted = false,
+    this.adInfo,
   });
 
   /// Returns an instance for a video that hasn't been loaded.
@@ -141,9 +143,20 @@ class VideoPlayerValue {
   /// Indicates whether or not the video has been loaded and is ready to play.
   final bool isInitialized;
 
+  /// Ad info from DASH. It is used to show ad icon on the DASH video player.
+  ///
+  /// If [hasAdInfo] is false this is `null`.
+  final AdInfoFromDash? adInfo;
+
   /// Indicates whether or not the video is in an error state. If this is true
   /// [errorDescription] should have information about the problem.
   bool get hasError => errorDescription != null;
+
+  /// Indicates whether or not the video has ADInfo.
+  bool get hasAdInfo => adInfo != null;
+
+  /// Indicates whether or not the video has special subtitle text style.
+  bool get hasTextStyle => caption.textStyle != null;
 
   /// Returns [size.width] / [size.height].
   ///
@@ -180,6 +193,7 @@ class VideoPlayerValue {
     double? playbackSpeed,
     String? errorDescription = _defaultErrorDescription,
     bool? isCompleted,
+    AdInfoFromDash? adInfo,
   }) {
     return VideoPlayerValue(
       duration: duration ?? this.duration,
@@ -199,6 +213,7 @@ class VideoPlayerValue {
           ? errorDescription
           : this.errorDescription,
       isCompleted: isCompleted ?? this.isCompleted,
+      adInfo: adInfo,
     );
   }
 
@@ -219,6 +234,7 @@ class VideoPlayerValue {
         'volume: $volume, '
         'playbackSpeed: $playbackSpeed, '
         'errorDescription: $errorDescription, '
+        'adInfo: $adInfo, '
         'isCompleted: $isCompleted),';
   }
 
@@ -241,6 +257,7 @@ class VideoPlayerValue {
           volume == other.volume &&
           playbackSpeed == other.playbackSpeed &&
           errorDescription == other.errorDescription &&
+          adInfo == other.adInfo &&
           isCompleted == other.isCompleted;
 
   @override
@@ -259,6 +276,7 @@ class VideoPlayerValue {
         volume,
         playbackSpeed,
         errorDescription,
+        adInfo,
         isCompleted,
       );
 }
@@ -568,12 +586,15 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
               SubtitleAttribute.fromEventSubtitleAttrList(
             event.subtitleAttributes,
           );
+          final TextStyle? actualTextStyle =
+              Caption.specifyTextStyle(subtitleAttributes);
           final Caption caption = Caption(
             number: 0,
             start: value.position,
             end: value.position + (event.duration?.end ?? Duration.zero),
             text: event.text ?? '',
             subtitleAttributes: subtitleAttributes,
+            textStyle: actualTextStyle,
           );
           value = value.copyWith(caption: caption);
         case VideoEventType.isPlayingStateUpdate:
@@ -586,6 +607,10 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           } else {
             value = value.copyWith(isPlaying: event.isPlaying);
           }
+        case VideoEventType.adFromDash:
+          final AdInfoFromDash? adInfo =
+              AdInfoFromDash.fromAdInfoMap(event.adInfo);
+          value = value.copyWith(adInfo: adInfo);
         case VideoEventType.unknown:
           break;
       }

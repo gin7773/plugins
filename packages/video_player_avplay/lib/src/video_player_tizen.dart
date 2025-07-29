@@ -444,6 +444,11 @@ class VideoPlayerTizen extends VideoPlayerPlatform {
             eventType: VideoEventType.isPlayingStateUpdate,
             isPlaying: map['isPlaying']! as bool,
           );
+        case 'adFromDash':
+          return VideoEvent(
+            eventType: VideoEventType.adFromDash,
+            adInfo: map['adInfo'] as Map<Object?, Object?>?,
+          );
         default:
           return VideoEvent(eventType: VideoEventType.unknown);
       }

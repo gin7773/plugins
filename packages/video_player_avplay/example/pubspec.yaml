@@ -7,9 +7,11 @@ environment:
   flutter: ">=3.13.0"
 
 dependencies:
+  date_format: ^2.0.9
   flutter:
     sdk: flutter
   http: ^0.13.0
+  outlined_text: ^1.0.1
   video_player_avplay:
     path: ../
 
