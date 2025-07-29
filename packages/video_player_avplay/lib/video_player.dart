@@ -572,6 +572,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           // position=value.duration. Instead of setting the values directly,
           // we use pause() and seekTo() to ensure the platform stops playing
           // and seeks to the last frame of the video.
+          print('***seeking issue***VideoEventType.completed!!!!!***');
           pause().then((void pauseResult) => seekTo(value.duration.end));
           value = value.copyWith(isCompleted: true);
           _durationTimer?.cancel();
@@ -676,6 +677,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   /// finished.
   Future<void> play() async {
     if (value.position == value.duration.end) {
+      print(
+        '***seeking issue***play(): value.position == value.duration.end***',
+      );
       await seekTo(Duration.zero);
     }
     value = value.copyWith(isPlaying: true);
@@ -754,12 +758,14 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       return;
     }
     if (value.isPlaying) {
+      print('***seeking issue***_applyPlayPause() ready to play()***');
       await _videoPlayerPlatform.play(_playerId);
 
       // Cancel previous timer.
       _timer?.cancel();
       _timer = _createTimer();
     } else {
+      print('***seeking issue***_applyPlayPause() ready to pause()***');
       _timer?.cancel();
       await _videoPlayerPlatform.pause(_playerId);
     }
@@ -789,6 +795,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   }
 
   Timer _createTimer() {
+    print('***seeking issue***_createTimer()***');
     return Timer.periodic(const Duration(milliseconds: 500), (
       Timer timer,
     ) async {
@@ -811,6 +818,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     if (_isDisposedOrNotInitialized) {
       return;
     }
+    print(
+      '***seeking issue***seekTo: position is ${value.position}, duration end is ${value.duration.end}***',
+    );
     if (position > value.duration.end) {
       position = value.duration.end;
     } else if (position < Duration.zero) {
@@ -1076,6 +1086,7 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   }
 
   void _updatePosition(Duration position) {
+    print('***seeking issue***_updatePosition at $position***');
     value = value.copyWith(
       position: position,
       caption: _getCaptionAt(position),
@@ -1084,6 +1095,9 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   }
 
   void _updateDuration(DurationRange duration) {
+    print(
+      '***seeking issue***_updateDuration: start is ${duration.start}, end is ${duration.end}***',
+    );
     value = value.copyWith(duration: duration);
   }
 
