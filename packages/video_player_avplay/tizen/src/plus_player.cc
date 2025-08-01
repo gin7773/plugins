@@ -1141,7 +1141,7 @@ void PlusPlayer::OnSubtitleData(char *data, const int size,
   plusplayer::SubtitleAttributeList *attrs = attr_list.get();
   flutter::EncodableList attributes_list;
   for (auto attr = attrs->begin(); attr != attrs->end(); attr++) {
-    LOG_INFO("************Subtitle update: type: %d, start: %u, end: %u************",
+    LOG_INFO("[PlusPlayer] Subtitle update: type: %d, start: %u, end: %u.",
              attr->type, attr->start_time, attr->stop_time);
     flutter::EncodableMap attributes = {
         {flutter::EncodableValue("attrType"),

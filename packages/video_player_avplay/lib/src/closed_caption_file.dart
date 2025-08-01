@@ -4,7 +4,6 @@
 
 import 'package:flutter/foundation.dart' show immutable, objectRuntimeType;
 import 'package:flutter/material.dart';
-import 'package:outlined_text/outlined_text.dart';
 
 import 'sub_rip.dart';
 import 'web_vtt.dart';
@@ -99,15 +98,19 @@ class Caption {
       List<SubtitleAttribute> subtitleAttributes) {
     TextStyle actualTextStyle = const TextStyle();
     for (final SubtitleAttribute attr in subtitleAttributes) {
-      print('-----------$attr------------------');
       switch (attr.attrType) {
         case SubtitleAttrType.subAttrFontFamily:
           actualTextStyle =
               actualTextStyle.copyWith(fontFamily: attr.attrValue as String);
         case SubtitleAttrType.subAttrFontSize:
-          break;
-        // actualTextStyle =
-        //     actualTextStyle.copyWith(fontSize: attr.attrValue as double);
+          final double fontSize = attr.attrValue as double;
+          if (fontSize < 1.0) {
+            const double getSysDefaultFontSize = 36.0;
+            actualTextStyle = actualTextStyle.copyWith(
+                fontSize: getSysDefaultFontSize * fontSize);
+          } else {
+            actualTextStyle = actualTextStyle.copyWith(fontSize: fontSize);
+          }
         case SubtitleAttrType.subAttrFontWeight:
           actualTextStyle = actualTextStyle.copyWith(
               fontWeight: _toWeight(attr.attrValue as int));
@@ -169,7 +172,6 @@ class Caption {
           break;
       }
     }
-    print("********$actualTextStyle*************");
     return actualTextStyle == const TextStyle() ? null : actualTextStyle;
   }
 

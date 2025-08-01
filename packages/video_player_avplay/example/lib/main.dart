@@ -142,11 +142,9 @@ class _DashRomoteVideoState extends State<_DashRomoteVideo> {
   void initState() {
     super.initState();
     _controller = VideoPlayerController.network(
-      //'https://dash.akamaized.net/dash264/TestCasesUHD/2b/11/MultiRate.mpd',
-      'http://109.123.95.136/tsy/vxttoken=TJDaW1pJTNBYjA4YmE/testpic_2s/multi_subs_sidecar.mpd',
-      //'http://109.123.95.136/tsy/vxttoken=TJDaW1pJTNBYjA4YmE/testpic_2s/multi_subs.mpd',
+      'https://dash.akamaized.net/dash264/TestCasesUHD/2b/11/MultiRate.mpd',
       formatHint: VideoFormat.dash,
-      // streamingProperty: _streamingProperties,
+      streamingProperty: _streamingProperties,
     );
 
     _controller.addListener(() {
