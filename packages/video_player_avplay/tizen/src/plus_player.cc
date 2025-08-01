@@ -303,16 +303,6 @@ bool PlusPlayer::SetPlaybackSpeed(double speed) {
 }
 
 bool PlusPlayer::SeekTo(int64_t position, SeekCompletedCallback callback) {
-  memento_.reset(new plusplayer::PlayerMemento());
-  if (!GetMemento(player_, memento_.get())) {
-    LOG_ERROR("***seeking issue***Player fail to get memento.");
-    return false;
-  }
-  LOG_INFO(
-      "***seeking issue***Memento saved current player state: %d, position: %llu ms, "
-      "is_live: %d",
-      (int)memento_->state, memento_->playing_time, memento_->is_live);
-
   LOG_INFO("[PlusPlayer] Seek to position: %lld", position);
 
   if (GetState(player_) < plusplayer::State::kReady) {
