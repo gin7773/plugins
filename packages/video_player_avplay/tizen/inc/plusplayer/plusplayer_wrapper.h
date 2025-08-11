@@ -457,7 +457,7 @@ typedef void (*OnPlayerDrmInitData)(int* drmhandle, unsigned int len,
 typedef void (*OnPlayerClosedCaptionData)(std::unique_ptr<char[]> data,
                                           const int size, void* user_data);
 typedef void (*OnPlayerCueEvent)(const char* CueData, void* userdata);
-typedef void (*OnPlayerDateRangeEvent)(const char* DateRangeData,
+typedef void (*OnPlayerDateRangeEvent)(const void* DateRangeData,
                                        void* user_data);
 typedef void (*OnPlayerStopReachEvent)(bool StopReach, void* user_data);
 typedef void (*OnPlayerCueOutContEvent)(const char* CueOutContData,
