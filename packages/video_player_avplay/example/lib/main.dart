@@ -22,7 +22,7 @@ class _App extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return DefaultTabController(
-      length: 9,
+      length: 10,
       child: Scaffold(
         key: const ValueKey<String>('home_page'),
         appBar: AppBar(
@@ -39,6 +39,7 @@ class _App extends StatelessWidget {
               Tab(icon: Icon(Icons.cloud), text: 'Asset'),
               Tab(icon: Icon(Icons.live_tv), text: 'Live'),
               Tab(icon: Icon(Icons.local_florist), text: 'ChangeURLTest'),
+              Tab(icon: Icon(Icons.abc), text: 'PictureCaptionTest'),
             ],
           ),
         ),
@@ -53,6 +54,7 @@ class _App extends StatelessWidget {
             _AssetVideo(),
             _LiveRemoteVideo(),
             _TestRemoteVideo(),
+            _PictureCaptionVideo(),
           ],
         ),
       ),
@@ -72,7 +74,7 @@ class _HlsRomoteVideoState extends State<_HlsRomoteVideo> {
   void initState() {
     super.initState();
     _controller = VideoPlayerController.network(
-      'https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8',
+      'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',
     );
 
     _controller.addListener(() {
@@ -107,7 +109,7 @@ class _HlsRomoteVideoState extends State<_HlsRomoteVideo> {
                 alignment: Alignment.bottomCenter,
                 children: <Widget>[
                   VideoPlayer(_controller),
-                  ClosedCaption(text: _controller.value.caption.text),
+                  ClosedCaption(text: _controller.value.textCaption.text),
                   _ControlsOverlay(controller: _controller),
                   VideoProgressIndicator(_controller, allowScrubbing: true),
                 ],
@@ -155,7 +157,7 @@ class _DashRomoteVideoState extends State<_DashRomoteVideo> {
         print(_controller.value.adInfo);
       }
       if (_controller.value.hasTextStyle) {
-        print(_controller.value.caption.textStyle);
+        print(_controller.value.textCaption.textStyle);
       }
       setState(() {});
     });
@@ -197,8 +199,9 @@ class _DashRomoteVideoState extends State<_DashRomoteVideo> {
                 children: <Widget>[
                   VideoPlayer(_controller),
                   ClosedCaption(
-                      text: _controller.value.caption.text,
-                      textStyle: _controller.value.caption.textStyle),
+                    text: _controller.value.textCaption.text,
+                    textStyle: _controller.value.textCaption.textStyle,
+                  ),
                   _ControlsOverlay(controller: _controller),
                   VideoProgressIndicator(_controller, allowScrubbing: true),
                 ],
@@ -258,7 +261,7 @@ class _Mp4RemoteVideoState extends State<_Mp4RemoteVideo> {
                 alignment: Alignment.bottomCenter,
                 children: <Widget>[
                   VideoPlayer(_controller),
-                  ClosedCaption(text: _controller.value.caption.text),
+                  ClosedCaption(text: _controller.value.textCaption.text),
                   _ControlsOverlay(controller: _controller),
                   VideoProgressIndicator(_controller, allowScrubbing: true),
                 ],
@@ -330,7 +333,7 @@ class _DrmRemoteVideoState extends State<_DrmRemoteVideo> {
                 alignment: Alignment.bottomCenter,
                 children: <Widget>[
                   VideoPlayer(_controller),
-                  ClosedCaption(text: _controller.value.caption.text),
+                  ClosedCaption(text: _controller.value.textCaption.text),
                   _ControlsOverlay(controller: _controller),
                   VideoProgressIndicator(_controller, allowScrubbing: true),
                 ],
@@ -396,7 +399,7 @@ class _DrmRemoteVideoState2 extends State<_DrmRemoteVideo2> {
                 alignment: Alignment.bottomCenter,
                 children: <Widget>[
                   VideoPlayer(_controller),
-                  ClosedCaption(text: _controller.value.caption.text),
+                  ClosedCaption(text: _controller.value.textCaption.text),
                   _ControlsOverlay(controller: _controller),
                   VideoProgressIndicator(_controller, allowScrubbing: true),
                 ],
@@ -422,7 +425,7 @@ class _TrackTestState extends State<_TrackTest> {
     super.initState();
 
     _controller = VideoPlayerController.network(
-      'https://bitdash-a.akamaihd.net/content/sintel/hls/playlist.m3u8',
+      'https://devstreaming-cdn.apple.com/videos/streaming/examples/img_bipbop_adv_example_fmp4/master.m3u8',
     );
 
     _controller.addListener(() {
@@ -457,7 +460,7 @@ class _TrackTestState extends State<_TrackTest> {
                 alignment: Alignment.bottomCenter,
                 children: <Widget>[
                   VideoPlayer(_controller),
-                  ClosedCaption(text: _controller.value.caption.text),
+                  ClosedCaption(text: _controller.value.textCaption.text),
                   _ControlsOverlay(controller: _controller),
                   VideoProgressIndicator(_controller, allowScrubbing: true),
                 ],
@@ -519,7 +522,7 @@ class _AssetVideoState extends State<_AssetVideo> {
                 alignment: Alignment.bottomCenter,
                 children: <Widget>[
                   VideoPlayer(_controller),
-                  ClosedCaption(text: _controller.value.caption.text),
+                  ClosedCaption(text: _controller.value.textCaption.text),
                   _ControlsOverlay(controller: _controller),
                   VideoProgressIndicator(_controller, allowScrubbing: true),
                 ],
@@ -829,7 +832,7 @@ class _LiveRomoteVideoState extends State<_LiveRemoteVideo> {
                 alignment: Alignment.bottomCenter,
                 children: <Widget>[
                   VideoPlayer(_controller),
-                  ClosedCaption(text: _controller.value.caption.text),
+                  ClosedCaption(text: _controller.value.textCaption.text),
                   _ControlsOverlay(controller: _controller),
                   VideoProgressIndicator(_controller, allowScrubbing: true),
                 ],
@@ -908,7 +911,76 @@ class _TestRemoteVideoState extends State<_TestRemoteVideo> {
                 alignment: Alignment.bottomCenter,
                 children: <Widget>[
                   VideoPlayer(_controller),
-                  ClosedCaption(text: _controller.value.caption.text),
+                  ClosedCaption(text: _controller.value.textCaption.text),
+                  _ControlsOverlay(controller: _controller),
+                  VideoProgressIndicator(_controller, allowScrubbing: true),
+                ],
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _PictureCaptionVideo extends StatefulWidget {
+  @override
+  State<_PictureCaptionVideo> createState() => _PictureCaptionVideoState();
+}
+
+class _PictureCaptionVideoState extends State<_PictureCaptionVideo> {
+  late VideoPlayerController _controller;
+
+  @override
+  void initState() {
+    super.initState();
+    _controller = VideoPlayerController.network(
+      'https://livesim2.dashif.org/vod/testpic_2s/imsc1_img.mpd',
+      formatHint: VideoFormat.dash,
+    );
+
+    _controller.addListener(() {
+      if (_controller.value.hasError) {
+        print(_controller.value.errorDescription);
+      }
+      setState(() {});
+    });
+    _controller.setLooping(true);
+    _controller.initialize().then((_) => setState(() {}));
+    _controller.play();
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SingleChildScrollView(
+      child: Column(
+        children: <Widget>[
+          Container(padding: const EdgeInsets.only(top: 20.0)),
+          const Text('Picture Caption Test'),
+          Container(
+            padding: const EdgeInsets.all(20),
+            child: AspectRatio(
+              aspectRatio: _controller.value.aspectRatio,
+              child: Stack(
+                alignment: Alignment.bottomCenter,
+                children: <Widget>[
+                  VideoPlayer(_controller),
+                  ClosedCaption(
+                    text: _controller.value.textCaption.text,
+                    textStyle: _controller.value.textCaption.textStyle,
+                    subtitleImage: _controller.value.pictureCaption.picture,
+                    subtitleImageWidth:
+                        _controller.value.pictureCaption.pictureWidth,
+                    subtitleImageHeight:
+                        _controller.value.pictureCaption.pictureHeight,
+                  ),
                   _ControlsOverlay(controller: _controller),
                   VideoProgressIndicator(_controller, allowScrubbing: true),
                 ],

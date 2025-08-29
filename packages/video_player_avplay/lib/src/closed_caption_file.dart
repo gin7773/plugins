@@ -2,7 +2,9 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-import 'package:flutter/foundation.dart' show immutable, objectRuntimeType;
+import 'dart:typed_data' show Uint8List;
+import 'package:flutter/foundation.dart'
+    show immutable, listEquals, objectRuntimeType;
 import 'package:flutter/material.dart';
 
 import 'sub_rip.dart';
@@ -26,7 +28,7 @@ abstract class ClosedCaptionFile {
   /// The full list of captions from a given file.
   ///
   /// The [captions] will be in the order that they appear in the given file.
-  List<Caption> get captions;
+  List<TextCaption> get textCaptions;
 }
 
 /// A representation of a single caption.
@@ -34,18 +36,14 @@ abstract class ClosedCaptionFile {
 /// A typical closed captioning file will include several [Caption]s, each
 /// linked to a start and end time.
 @immutable
-class Caption {
+sealed class Caption {
   /// Creates a new [Caption] object.
   ///
-  /// This is not recommended for direct use unless you are writing a parser for
-  /// a new closed captioning file type.
+  /// This constructor is for internal use by subclasses.
   const Caption({
     required this.number,
     required this.start,
     required this.end,
-    required this.text,
-    this.subtitleAttributes,
-    this.textStyle,
   });
 
   /// The number that this caption was assigned.
@@ -56,6 +54,20 @@ class Caption {
 
   /// When in the given video should this [Caption] be dismissed.
   final Duration end;
+}
+
+/// A representation of a text-based caption.
+@immutable
+class TextCaption extends Caption {
+  /// Creates a new [TextCaption] object.
+  const TextCaption({
+    required super.number,
+    required super.start,
+    required super.end,
+    required this.text,
+    this.subtitleAttributes,
+    this.textStyle,
+  });
 
   /// The actual text that should appear on screen to be read between [start]
   /// and [end].
@@ -67,9 +79,15 @@ class Caption {
   /// Specifies how the text in the closed caption should look.
   final TextStyle? textStyle;
 
-  /// Specifies the text's outline style.
-  /// final TextStyle textOutlineStyle = TextStyle();
-  /// final OutlinedTextStroke? textOutlineStyle;
+  /// A no text caption object. This is a caption with [start] and [end] durations of zero,
+  /// and an empty [text] string.
+  static const TextCaption none = TextCaption(
+    number: 0,
+    start: Duration.zero,
+    end: Duration.zero,
+    text: '',
+    subtitleAttributes: <SubtitleAttribute?>[],
+  );
 
   static Color? _toColor(int colorValue) {
     String hexValue = colorValue.toRadixString(16);
@@ -175,19 +193,9 @@ class Caption {
     return actualTextStyle == const TextStyle() ? null : actualTextStyle;
   }
 
-  /// A no caption object. This is a caption with [start] and [end] durations of zero,
-  /// and an empty [text] string.
-  static const Caption none = Caption(
-    number: 0,
-    start: Duration.zero,
-    end: Duration.zero,
-    text: '',
-    subtitleAttributes: <SubtitleAttribute?>[],
-  );
-
   @override
   String toString() {
-    return '${objectRuntimeType(this, 'Caption')}('
+    return '${objectRuntimeType(this, 'TextCaption')}('
         'number: $number, '
         'start: $start, '
         'end: $end, '
@@ -199,18 +207,78 @@ class Caption {
   @override
   bool operator ==(Object other) =>
       identical(this, other) ||
-      other is Caption &&
+      other is TextCaption &&
           runtimeType == other.runtimeType &&
           number == other.number &&
           start == other.start &&
           end == other.end &&
           text == other.text &&
-          subtitleAttributes == other.subtitleAttributes &&
+          listEquals(subtitleAttributes, other.subtitleAttributes) &&
           textStyle == other.textStyle;
 
   @override
   int get hashCode =>
       Object.hash(number, start, end, text, subtitleAttributes, textStyle);
+}
+
+/// A representation of a picture-based caption.
+@immutable
+class PictureCaption extends Caption {
+  /// Creates a new [PictureCaption] object.
+  const PictureCaption({
+    required super.number,
+    required super.start,
+    required super.end,
+    this.picture,
+    this.pictureWidth,
+    this.pictureHeight,
+  });
+
+  /// The image data for the caption, typically in a format like PNG or JPEG.
+  final Uint8List? picture;
+
+  /// Specifies the picture's width.
+  final double? pictureWidth;
+
+  /// Specifies the picture's height.
+  final double? pictureHeight;
+
+  /// A no picture caption object. This is a caption with [start] and [end] durations of zero,
+  /// and an empty [picture].
+  static const PictureCaption none = PictureCaption(
+    number: 0,
+    start: Duration.zero,
+    end: Duration.zero,
+    pictureWidth: 0.0,
+    pictureHeight: 0.0,
+  );
+
+  @override
+  String toString() {
+    return '${objectRuntimeType(this, 'PictureCaption')}('
+        'number: $number, '
+        'start: $start, '
+        'end: $end, '
+        'picture: ${picture == null ? 'null' : '${picture?.length} bytes'}, '
+        'pictureWidth: $pictureWidth, '
+        'pictureHeight: $pictureHeight)';
+  }
+
+  @override
+  bool operator ==(Object other) =>
+      identical(this, other) ||
+      other is PictureCaption &&
+          runtimeType == other.runtimeType &&
+          number == other.number &&
+          start == other.start &&
+          end == other.end &&
+          picture == other.picture &&
+          pictureWidth == other.pictureWidth &&
+          pictureHeight == other.pictureHeight;
+
+  @override
+  int get hashCode =>
+      Object.hash(number, start, end, picture, pictureWidth, pictureHeight);
 }
 
 /// The different types of subtitle attributes that can be set on the player.

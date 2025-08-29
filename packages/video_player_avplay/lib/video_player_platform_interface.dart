@@ -507,6 +507,9 @@ class VideoEvent {
     this.isPlaying,
     this.subtitleAttributes,
     this.adInfo,
+    this.picture,
+    this.pictureWidth,
+    this.pictureHeight,
   });
 
   /// The type of the event.
@@ -545,6 +548,21 @@ class VideoEvent {
   /// Only used if [eventType] is [VideoEventType.adFromDash].
   final Map<Object?, Object?>? adInfo;
 
+  /// Subtitle picture data of the video.
+  ///
+  /// Only used if [eventType] is [VideoEventType.subtitleUpdate].
+  final Uint8List? picture;
+
+  /// Subtitle picture width.
+  ///
+  /// Only used when picture is not null.
+  final double? pictureWidth;
+
+  /// Subtitle picture height.
+  ///
+  /// Only used when picture is not null.
+  final double? pictureHeight;
+
   @override
   bool operator ==(Object other) {
     return identical(this, other) ||
@@ -556,8 +574,11 @@ class VideoEvent {
             buffered == other.buffered &&
             text == other.text &&
             isPlaying == other.isPlaying &&
-            subtitleAttributes == other.subtitleAttributes &&
-            adInfo == other.adInfo;
+            listEquals(subtitleAttributes, other.subtitleAttributes) &&
+            mapEquals(adInfo, other.adInfo) &&
+            picture == other.picture &&
+            pictureWidth == other.pictureWidth &&
+            pictureHeight == other.pictureHeight;
   }
 
   @override
@@ -569,7 +590,10 @@ class VideoEvent {
       text.hashCode ^
       isPlaying.hashCode ^
       subtitleAttributes.hashCode ^
-      adInfo.hashCode;
+      adInfo.hashCode ^
+      picture.hashCode ^
+      pictureWidth.hashCode ^
+      pictureHeight.hashCode;
 }
 
 /// Type of the event.
