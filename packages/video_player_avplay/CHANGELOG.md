@@ -1,3 +1,6 @@
+## 0.7.1
+* Fix assertion issue when getting ADInfo.
+
 ## 0.7.0
 * Add new features for DASH video player
   1. Support update token before and after player prepare done.
