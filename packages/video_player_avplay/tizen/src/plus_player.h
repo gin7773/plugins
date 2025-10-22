@@ -69,6 +69,7 @@ class PlusPlayer : public VideoPlayer {
   flutter::EncodableValue ParseVideoTrack(plusplayer_track_h video_track);
   flutter::EncodableValue ParseAudioTrack(plusplayer_track_h audio_track);
   flutter::EncodableValue ParseSubtitleTrack(plusplayer_track_h subtitle_track);
+            
   void RegisterCallback();
   void UnRegisterCallback();
   bool StopAndClose();
@@ -82,14 +83,14 @@ class PlusPlayer : public VideoPlayer {
   static bool OnLicenseAcquired(int *drm_handle, unsigned int length,
                                 unsigned char *pssh_data, void *user_data);
   static void OnPrepareDone(bool ret, void *user_data);
-  static void OnBufferStatus(const int percent, void *user_data);
+  static void OnBufferStatus(int percent, void *user_data);
   static void OnSeekDone(void *user_data);
   static void OnEos(void *user_data);
-  //   static void OnSubtitleData(char *data, const int size,
-  //                              const plusplayer::SubtitleType &type,
-  //                              const uint64_t duration,
-  //                              plusplayer::SubtitleAttributeListPtr
-  //                              attr_list, void *user_data);
+//   static void OnSubtitleData(const plusplayer_subtitle_type_e type,
+//                              const uint64_t duration_in_ms, const char *data,
+//                              const int size,
+//                              plusplayer_subtitle_attr_s *attr_list,
+//                              int attr_size, void *userdata);
   static void OnResourceConflicted(void *user_data);
   static void OnError(plusplayer_error_type_e error_code, void *user_data);
   static void OnErrorMsg(plusplayer_error_type_e error_code,

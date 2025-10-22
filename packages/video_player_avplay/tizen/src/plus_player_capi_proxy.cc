@@ -29,9 +29,9 @@ int CallPlusplayerFunction(void* handle, const char* func_name,
 }
 
 PlusPlayerCapiProxy::PlusPlayerCapiProxy() {
-  plusplayer_capi_handle_ = dlopen("libplusplayer_tvplus.so", RTLD_LAZY);
+  plusplayer_capi_handle_ = dlopen("libplusplayer.so", RTLD_LAZY);
   if (plusplayer_capi_handle_ == nullptr) {
-    LOG_ERROR("Failed to open libplusplayer_tvplus.so");
+    LOG_ERROR("Failed to open libplusplayer.so");
   }
 }
 
