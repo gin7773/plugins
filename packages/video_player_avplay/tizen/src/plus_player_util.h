@@ -13,11 +13,11 @@
 #include <vector>
 
 #include "plusplayer_capi/display.h"
+#include "plusplayer_capi/error.h"
 #include "plusplayer_capi/property.h"
 #include "plusplayer_capi/state.h"
 #include "plusplayer_capi/track.h"
 #include "plusplayer_capi/track_capi.h"
-#include "plusplayer_capi/error.h"
 namespace video_player_avplay_tizen {
 struct PlayerMemento {
   uint64_t playing_time;
@@ -28,7 +28,8 @@ struct PlayerMemento {
 
 plusplayer_track_type_e ConvertTrackType(const std::string &track_type);
 plusplayer_property_e ConvertPropertyType(const std::string &type_value);
-plusplayer_display_rotation_type_e ConvertDisplayRotationType(const int64_t &rotation_type);
+plusplayer_display_rotation_type_e ConvertDisplayRotationType(
+    const int64_t &rotation_type);
 plusplayer_display_mode_e ConvertDisplayMode(const int64_t &display_mode);
 std::vector<std::string> Split(const std::string &s, char delim);
 std::string GetErrorMessage(plusplayer_error_type_e error_code);

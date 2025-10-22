@@ -12,7 +12,8 @@
 
 // Template function for dynamic library function calls with custom error values
 template <typename FuncType, typename... Args>
-int CallPlusplayerFunction(void* handle, const char* func_name, Args&&... args) {  
+int CallPlusplayerFunction(void* handle, const char* func_name,
+                           Args&&... args) {
   if (!handle) {
     LOG_ERROR("plusplayer_capi_handle_ is invalid.");
     return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
@@ -113,16 +114,15 @@ int PlusPlayerCapiProxy::plusplayer_capi_set_app_id(plusplayer_h handle,
 }
 
 void PlusPlayerCapiProxy::plusplayer_capi_set_prebuffer_mode(
-     plusplayer_h handle, bool prebuffer_mode) {
+    plusplayer_h handle, bool prebuffer_mode) {
   if (!plusplayer_capi_handle_) {
     LOG_ERROR("power_state_handle_ is invalid.");
     return;
   }
 
-  FunPlusplayerCapiSetPrebufferMode plusplayer_capi_set_prebuffer_mode = 
-    reinterpret_cast<FunPlusplayerCapiSetPrebufferMode>(
-      dlsym(plusplayer_capi_handle_, "plusplayer_set_prebuffer_mode")
-    );
+  FunPlusplayerCapiSetPrebufferMode plusplayer_capi_set_prebuffer_mode =
+      reinterpret_cast<FunPlusplayerCapiSetPrebufferMode>(
+          dlsym(plusplayer_capi_handle_, "plusplayer_set_prebuffer_mode"));
 
   if (!plusplayer_capi_set_prebuffer_mode) {
     LOG_ERROR("Failed to find plusplayer_set_prebuffer_mode function.");
@@ -355,16 +355,17 @@ const char* PlusPlayerCapiProxy::plusplayer_capi_get_track_language_code(
     return nullptr;
   }
 
-  FunPlusplayerCapiGetTrackLanguageCode plusplayer_capi_get_track_language_code =
-      reinterpret_cast<FunPlusplayerCapiGetTrackLanguageCode>(
-          dlsym(plusplayer_capi_handle_, "plusplayer_get_track_language_code"));
+  FunPlusplayerCapiGetTrackLanguageCode
+      plusplayer_capi_get_track_language_code =
+          reinterpret_cast<FunPlusplayerCapiGetTrackLanguageCode>(dlsym(
+              plusplayer_capi_handle_, "plusplayer_get_track_language_code"));
 
   if (!plusplayer_capi_get_track_language_code) {
     LOG_ERROR("Failed to find plusplayer_get_track_language_code function.");
     return nullptr;
   }
 
-  return plusplayer_capi_get_track_language_code(handle, type, index);     
+  return plusplayer_capi_get_track_language_code(handle, type, index);
 }
 
 int PlusPlayerCapiProxy::plusplayer_capi_set_app_info(

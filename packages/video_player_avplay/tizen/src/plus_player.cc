@@ -10,9 +10,9 @@
 #include <sstream>
 
 #include "log.h"
-#include "plusplayer_capi/track.h"
 #include "plus_player_capi_proxy.h"
 #include "plus_player_util.h"
+#include "plusplayer_capi/track.h"
 #include "rapidjson/document.h"
 #include "rapidjson/stringbuffer.h"
 #include "rapidjson/writer.h"
