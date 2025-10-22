@@ -13,7 +13,8 @@
 #include "device_proxy.h"
 #include "drm_manager.h"
 #include "messages.h"
-#include "plusplayer/plusplayer_wrapper.h"
+#include "plus_player_capi_proxy.h"
+#include "plus_player_util.h"
 #include "video_player.h"
 
 namespace video_player_avplay_tizen {
@@ -65,12 +66,18 @@ class PlusPlayer : public VideoPlayer {
   bool SetDisplay();
   bool SetDrm(const std::string &uri, int drm_type,
               const std::string &license_server_url);
-  flutter::EncodableValue ParseVideoTrack(plusplayer::Track video_track);
-  flutter::EncodableValue ParseAudioTrack(plusplayer::Track audio_track);
-  flutter::EncodableValue ParseSubtitleTrack(plusplayer::Track subtitle_track);
-  void RegisterListener();
+  flutter::EncodableValue ParseVideoTrack(plusplayer_track_h video_track);
+  flutter::EncodableValue ParseAudioTrack(plusplayer_track_h audio_track);
+  flutter::EncodableValue ParseSubtitleTrack(plusplayer_track_h subtitle_track);
+  void RegisterCallback();
+  void UnRegisterCallback();
   bool StopAndClose();
   bool RestorePlayer(const CreateMessage *restore_message, int64_t resume_time);
+  bool GetMemento(PlayerMemento *memento);
+
+  static bool GetTrackVideo(const plusplayer_track_h track, void *user_data);
+  static bool GetTrackAudio(const plusplayer_track_h track, void *user_data);
+  static bool GetTrackSubtitle(const plusplayer_track_h track, void *user_data);
 
   static bool OnLicenseAcquired(int *drm_handle, unsigned int length,
                                 unsigned char *pssh_data, void *user_data);
@@ -78,21 +85,21 @@ class PlusPlayer : public VideoPlayer {
   static void OnBufferStatus(const int percent, void *user_data);
   static void OnSeekDone(void *user_data);
   static void OnEos(void *user_data);
-  static void OnSubtitleData(char *data, const int size,
-                             const plusplayer::SubtitleType &type,
-                             const uint64_t duration,
-                             plusplayer::SubtitleAttributeListPtr attr_list,
-                             void *user_data);
+  //   static void OnSubtitleData(char *data, const int size,
+  //                              const plusplayer::SubtitleType &type,
+  //                              const uint64_t duration,
+  //                              plusplayer::SubtitleAttributeListPtr
+  //                              attr_list, void *user_data);
   static void OnResourceConflicted(void *user_data);
-  static void OnError(const plusplayer::ErrorType &error_code, void *user_data);
-  static void OnErrorMsg(const plusplayer::ErrorType &error_code,
+  static void OnError(plusplayer_error_type_e error_code, void *user_data);
+  static void OnErrorMsg(plusplayer_error_type_e error_code,
                          const char *error_msg, void *user_data);
-  static void OnDrmInitData(int *drm_andle, unsigned int len,
+  static void OnDrmInitData(int *drm_handle, unsigned int len,
                             unsigned char *pssh_data,
-                            plusplayer::TrackType type, void *user_data);
+                            plusplayer_track_type_e type, void *user_data);
   static void OnAdaptiveStreamingControlEvent(
-      const plusplayer::StreamingMessageType &type,
-      const plusplayer::MessageParam &msg, void *user_data);
+      plusplayer_streaming_message_type_e type, plusplayer_message_param_s *msg,
+      void *user_data);
   static void OnClosedCaptionData(std::unique_ptr<char[]> data, const int size,
                                   void *user_data);
   static void OnCueEvent(const char *cue_data, void *user_data);
@@ -103,15 +110,15 @@ class PlusPlayer : public VideoPlayer {
   static void OnStateChangedToPlaying(void *user_data);
   static void OnADEventFromDash(const char *ad_data, void *user_data);
 
-  PlusplayerRef player_ = nullptr;
-  PlusplayerListener listener_;
+  plusplayer_h player_ = nullptr;
   std::unique_ptr<DrmManager> drm_manager_;
   bool is_buffering_ = false;
   bool is_prebuffer_mode_ = false;
   SeekCompletedCallback on_seek_completed_;
-  std::unique_ptr<plusplayer::PlayerMemento> memento_ = nullptr;
+  std::unique_ptr<PlayerMemento> memento_ = nullptr;
   std::string url_;
   std::unique_ptr<DeviceProxy> device_proxy_ = nullptr;
+  std::unique_ptr<PlusPlayerCapiProxy> plusplayer_capi_proxy_ = nullptr;
   CreateMessage create_message_;
 };
 
