@@ -77,9 +77,7 @@ plusplayer_property_e ConvertPropertyType(const std::string &type_value) {
 plusplayer_display_rotation_type_e ConvertDisplayRotationType(
     const int64_t &rotation_type) {
   int index = static_cast<int>(rotation_type);
-  return (index >= 0 && index < kConvertDisplayRotationVec.size())
-             ? kConvertDisplayRotationVec[index]
-             : static_cast<plusplayer_display_rotation_type_e>(-1);
+  return kConvertDisplayRotationVec[index];
 }
 
 plusplayer_display_mode_e ConvertDisplayMode(const int64_t &display_mode) {
