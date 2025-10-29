@@ -312,7 +312,8 @@ bool PlusPlayerPlatform::SetAppId() {
     return false;
   }
 
-  if (plusplayer_set_app_id(player_, appId) != PLUSPLAYER_ERROR_TYPE_NONE) {
+  if (plusplayer_capi_proxy_->plusplayer_capi_set_app_id(player_, appId) !=
+      PLUSPLAYER_ERROR_TYPE_NONE) {
     LOG_ERROR("[PlusPlayerPlatform] Fail to set app id");
     free(appId);
     return false;
@@ -751,8 +752,8 @@ flutter::EncodableList PlusPlayerPlatform::GetTrackInfo(
   user_data.track_selections = &trackSelections;
   user_data.type = type;
   user_data.instance = this;
-  if (plusplayer_get_foreach_track(player_, TrackInfoCb, &user_data) !=
-      PLUSPLAYER_ERROR_TYPE_NONE) {
+  if (plusplayer_capi_proxy_->plusplayer_capi_get_foreach_track(
+          player_, TrackInfoCb, &user_data) != PLUSPLAYER_ERROR_TYPE_NONE) {
     LOG_ERROR("[PlusPlayerPlatform] Fail to get track info");
     return {};
   }
@@ -1372,7 +1373,7 @@ void PlusPlayerPlatform::OnSubtitleData(const plusplayer_subtitle_type_e type,
   PlusPlayerPlatform *self = reinterpret_cast<PlusPlayerPlatform *>(user_data);
 
   flutter::EncodableList attributes_list;
-  for (int i = 0; i < size; i++) {
+  for (int i = 0; i < attr_size; i++) {
     LOG_INFO(
         "[PlusPlayerPlatform] Subtitle update: type: %d, start: %u, end: %u",
         attr_list[i].attr, attr_list[i].start_time, attr_list[i].stop_time);

@@ -23,13 +23,11 @@ FuncType CallPlusplayerFunction(void* handle, const char* func_name) {
     LOG_ERROR("Failed to find %s function.", func_name);
     return nullptr;
   }
-  LOG_INFO("************youyouyou004************");
 
   return func;
 }
 
 PlusPlayerCapiProxy::PlusPlayerCapiProxy() {
-  LOG_INFO("------------------------------");
   plusplayer_capi_handle_ = dlopen("libplusplayer.so", RTLD_LAZY);
   if (plusplayer_capi_handle_ == nullptr) {
     LOG_ERROR("Failed to open libplusplayer.so");
@@ -44,30 +42,23 @@ PlusPlayerCapiProxy::~PlusPlayerCapiProxy() {
 }
 
 plusplayer_h PlusPlayerCapiProxy::plusplayer_capi_create(void) {
-  LOG_INFO("*************hhhh0001**********");
   FunPlusplayerCapiCreate plusplayer_capi_create =
       CallPlusplayerFunction<FunPlusplayerCapiCreate>(plusplayer_capi_handle_,
                                                       "plusplayer_create");
-  LOG_INFO("*************hhhh0002**********");
   if (plusplayer_capi_create) {
     return plusplayer_capi_create();
   }
-  LOG_INFO("*************hhhh0003**********");
   return nullptr;
 }
 
 int PlusPlayerCapiProxy::plusplayer_capi_open(plusplayer_h handle,
                                               const char* uri) {
-  LOG_INFO("************hhhh0003************");
   FunPlusplayerCapiOpen plusplayer_capi_open =
       CallPlusplayerFunction<FunPlusplayerCapiOpen>(plusplayer_capi_handle_,
                                                     "plusplayer_open");
-  LOG_INFO("************hhhh0004************");
   if (plusplayer_capi_open) {
-    LOG_INFO("************hhhh0005************");
     return plusplayer_capi_open(handle, uri);
   }
-  LOG_INFO("************hhhh0006************");
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
   // if (!plusplayer_capi_handle_) {
   //   LOG_ERROR("power_state_handle_ is invalid.");
