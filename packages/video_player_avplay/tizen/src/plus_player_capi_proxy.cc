@@ -204,8 +204,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_set_display_subsurface(
 }
 
 int PlusPlayerCapiProxy::plusplayer_capi_set_prepare_async_done_cb(
-    plusplayer_h handle,
-      plusplayer_prepare_async_done_cb prepare_async_done_cb, void* userdata) {
+    plusplayer_h handle, plusplayer_prepare_async_done_cb prepare_async_done_cb,
+    void* userdata) {
   FunPlusplayerCapiSetPrepareAsyncDoneCb
       plusplayer_capi_set_prepare_async_done_cb =
           CallPlusplayerFunction<FunPlusplayerCapiSetPrepareAsyncDoneCb>(
@@ -219,7 +219,7 @@ int PlusPlayerCapiProxy::plusplayer_capi_set_prepare_async_done_cb(
 
 int PlusPlayerCapiProxy::plusplayer_capi_set_resource_conflicted_cb(
     plusplayer_h handle,
-      plusplayer_resource_conflicted_cb resource_conflicted_cb, void* userdata) {
+    plusplayer_resource_conflicted_cb resource_conflicted_cb, void* userdata) {
   FunPlusplayerCapiSetResourceConflictedCb
       plusplayer_capi_set_resource_conflicted_cb =
           CallPlusplayerFunction<FunPlusplayerCapiSetResourceConflictedCb>(
@@ -231,8 +231,9 @@ int PlusPlayerCapiProxy::plusplayer_capi_set_resource_conflicted_cb(
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_set_eos_cb(plusplayer_h handle, plusplayer_eos_cb eos_cb,
-                                 void* userdata) {
+int PlusPlayerCapiProxy::plusplayer_capi_set_eos_cb(plusplayer_h handle,
+                                                    plusplayer_eos_cb eos_cb,
+                                                    void* userdata) {
   FunPlusplayerCapiSetEosCb plusplayer_capi_set_eos_cb =
       CallPlusplayerFunction<FunPlusplayerCapiSetEosCb>(
           plusplayer_capi_handle_, "plusplayer_set_eos_cb");
@@ -242,8 +243,9 @@ int PlusPlayerCapiProxy::plusplayer_capi_set_eos_cb(plusplayer_h handle, pluspla
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_set_buffer_status_cb(plusplayer_h handle, plusplayer_buffer_status_cb buffer_status_cb,
-      void* userdata) {
+int PlusPlayerCapiProxy::plusplayer_capi_set_buffer_status_cb(
+    plusplayer_h handle, plusplayer_buffer_status_cb buffer_status_cb,
+    void* userdata) {
   FunPlusplayerCapiSetBufferStatusCb plusplayer_capi_set_buffer_status_cb =
       CallPlusplayerFunction<FunPlusplayerCapiSetBufferStatusCb>(
           plusplayer_capi_handle_, "plusplayer_set_buffer_status_cb");
@@ -254,9 +256,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_set_buffer_status_cb(plusplayer_h handl
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_set_error_cb(plusplayer_h handle,
-                                   plusplayer_error_cb error_cb,
-                                   void* userdata) {
+int PlusPlayerCapiProxy::plusplayer_capi_set_error_cb(
+    plusplayer_h handle, plusplayer_error_cb error_cb, void* userdata) {
   FunPlusplayerCapiSetErrorCb plusplayer_capi_set_error_cb =
       CallPlusplayerFunction<FunPlusplayerCapiSetErrorCb>(
           plusplayer_capi_handle_, "plusplayer_set_error_cb");
@@ -266,9 +267,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_set_error_cb(plusplayer_h handle,
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_set_error_msg_cb(plusplayer_h handle,
-                                       plusplayer_error_msg_cb error_msg_cb,
-                                       void* userdata) {
+int PlusPlayerCapiProxy::plusplayer_capi_set_error_msg_cb(
+    plusplayer_h handle, plusplayer_error_msg_cb error_msg_cb, void* userdata) {
   FunPlusplayerCapiSetErrorMsgCb plusplayer_capi_set_error_msg_cb =
       CallPlusplayerFunction<FunPlusplayerCapiSetErrorMsgCb>(
           plusplayer_capi_handle_, "plusplayer_set_error_msg_cb");
@@ -278,9 +278,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_set_error_msg_cb(plusplayer_h handle,
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_set_seek_done_cb(plusplayer_h handle,
-                                       plusplayer_seek_done_cb seek_done_cb,
-                                       void* userdata) {
+int PlusPlayerCapiProxy::plusplayer_capi_set_seek_done_cb(
+    plusplayer_h handle, plusplayer_seek_done_cb seek_done_cb, void* userdata) {
   FunPlusplayerCapiSetSeekDoneCb plusplayer_capi_set_seek_done_cb =
       CallPlusplayerFunction<FunPlusplayerCapiSetSeekDoneCb>(
           plusplayer_capi_handle_, "plusplayer_set_seek_done_cb");
@@ -292,7 +291,7 @@ int PlusPlayerCapiProxy::plusplayer_capi_set_seek_done_cb(plusplayer_h handle,
 
 int PlusPlayerCapiProxy::plusplayer_capi_set_subtitle_updated_cb(
     plusplayer_h handle, plusplayer_subtitle_updated_cb subtitle_updated_cb,
-      void* userdata) {
+    void* userdata) {
   FunPlusplayerCapiSetSubtitleUpdatedCb
       plusplayer_capi_set_subtitle_updated_cb =
           CallPlusplayerFunction<FunPlusplayerCapiSetSubtitleUpdatedCb>(
@@ -304,9 +303,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_set_subtitle_updated_cb(
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_set_ad_event_cb(plusplayer_h handle,
-                                      plusplayer_ad_event_cb ad_event_cb,
-                                      void* userdata) {
+int PlusPlayerCapiProxy::plusplayer_capi_set_ad_event_cb(
+    plusplayer_h handle, plusplayer_ad_event_cb ad_event_cb, void* userdata) {
   FunPlusplayerCapiSetAdEventCb plusplayer_capi_set_ad_event_cb =
       CallPlusplayerFunction<FunPlusplayerCapiSetAdEventCb>(
           plusplayer_capi_handle_, "plusplayer_set_ad_event_cb");
@@ -367,7 +365,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_suspend(plusplayer_h handle) {
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_restore(plusplayer_h handle, plusplayer_state_e target_state) {
+int PlusPlayerCapiProxy::plusplayer_capi_restore(
+    plusplayer_h handle, plusplayer_state_e target_state) {
   FunPlusplayerCapiRestore plusplayer_capi_restore =
       CallPlusplayerFunction<FunPlusplayerCapiRestore>(plusplayer_capi_handle_,
                                                        "plusplayer_restore");
@@ -377,8 +376,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_restore(plusplayer_h handle, plusplayer
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_get_playing_time(plusplayer_h handle,
-                                       uint64_t* cur_time_ms) {
+int PlusPlayerCapiProxy::plusplayer_capi_get_playing_time(
+    plusplayer_h handle, uint64_t* cur_time_ms) {
   FunPlusplayerCapiGetPlayingTime plusplayer_capi_get_playing_time =
       CallPlusplayerFunction<FunPlusplayerCapiGetPlayingTime>(
           plusplayer_capi_handle_, "plusplayer_get_playing_time");
@@ -388,8 +387,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_get_playing_time(plusplayer_h handle,
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_set_display_mode(plusplayer_h handle,
-                                       plusplayer_display_mode_e mode) {
+int PlusPlayerCapiProxy::plusplayer_capi_set_display_mode(
+    plusplayer_h handle, plusplayer_display_mode_e mode) {
   FunPlusplayerCapiSetDisplayMode plusplayer_capi_set_display_mode =
       CallPlusplayerFunction<FunPlusplayerCapiSetDisplayMode>(
           plusplayer_capi_handle_, "plusplayer_set_display_mode");
@@ -399,8 +398,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_set_display_mode(plusplayer_h handle,
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_set_display_roi(plusplayer_h handle,
-                                      plusplayer_geometry_s roi) {
+int PlusPlayerCapiProxy::plusplayer_capi_set_display_roi(
+    plusplayer_h handle, plusplayer_geometry_s roi) {
   FunPlusplayerCapiSetDisplayRoi plusplayer_capi_set_display_roi =
       CallPlusplayerFunction<FunPlusplayerCapiSetDisplayRoi>(
           plusplayer_capi_handle_, "plusplayer_set_display_roi");
@@ -410,7 +409,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_set_display_roi(plusplayer_h handle,
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_set_display_rotation(plusplayer_h handle, plusplayer_display_rotation_type_e rotation) {
+int PlusPlayerCapiProxy::plusplayer_capi_set_display_rotation(
+    plusplayer_h handle, plusplayer_display_rotation_type_e rotation) {
   FunPlusplayerCapiSetDisplayRotation plusplayer_capi_set_display_rotation =
       CallPlusplayerFunction<FunPlusplayerCapiSetDisplayRotation>(
           plusplayer_capi_handle_, "plusplayer_set_display_rotation");
@@ -420,8 +420,9 @@ int PlusPlayerCapiProxy::plusplayer_capi_set_display_rotation(plusplayer_h handl
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_set_buffer_config(plusplayer_h handle, const char* config,
-                                        int amount) {
+int PlusPlayerCapiProxy::plusplayer_capi_set_buffer_config(plusplayer_h handle,
+                                                           const char* config,
+                                                           int amount) {
   FunPlusplayerCapiSetBufferConfig plusplayer_capi_set_buffer_config =
       CallPlusplayerFunction<FunPlusplayerCapiSetBufferConfig>(
           plusplayer_capi_handle_, "plusplayer_set_buffer_config");
@@ -431,7 +432,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_set_buffer_config(plusplayer_h handle, 
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_get_duration(plusplayer_h handle, int64_t* duration_ms) {
+int PlusPlayerCapiProxy::plusplayer_capi_get_duration(plusplayer_h handle,
+                                                      int64_t* duration_ms) {
   FunPlusplayerCapiGetDuration plusplayer_capi_get_duration =
       CallPlusplayerFunction<FunPlusplayerCapiGetDuration>(
           plusplayer_capi_handle_, "plusplayer_get_duration");
@@ -441,8 +443,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_get_duration(plusplayer_h handle, int64
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_set_playback_rate(plusplayer_h handle,
-                                        const double playback_rate) {
+int PlusPlayerCapiProxy::plusplayer_capi_set_playback_rate(
+    plusplayer_h handle, const double playback_rate) {
   FunPlusplayerCapiSetPlaybackRate plusplayer_capi_set_playback_rate =
       CallPlusplayerFunction<FunPlusplayerCapiSetPlaybackRate>(
           plusplayer_capi_handle_, "plusplayer_set_playback_rate");
@@ -472,9 +474,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_activate_audio(plusplayer_h handle) {
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_get_property(plusplayer_h handle,
-                                   plusplayer_property_e property,
-                                   char** value) {
+int PlusPlayerCapiProxy::plusplayer_capi_get_property(
+    plusplayer_h handle, plusplayer_property_e property, char** value) {
   FunPlusplayerCapiGetProperty plusplayer_capi_get_property =
       CallPlusplayerFunction<FunPlusplayerCapiGetProperty>(
           plusplayer_capi_handle_, "plusplayer_get_property");
@@ -484,9 +485,42 @@ int PlusPlayerCapiProxy::plusplayer_capi_get_property(plusplayer_h handle,
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_get_track_count(plusplayer_h handle,
-                                      plusplayer_track_type_e track_type,
-                                      int* count) {
+int PlusPlayerCapiProxy::plusplayer_capi_is_live_streaming(plusplayer_h handle,
+                                                           bool* is_live) {
+  FunPlusplayerCapiIsLiveStreaming plusplayer_capi_is_live_streaming =
+      CallPlusplayerFunction<FunPlusplayerCapiIsLiveStreaming>(
+          plusplayer_capi_handle_, "plusplayer_is_live_streaming");
+  if (plusplayer_capi_is_live_streaming) {
+    return plusplayer_capi_is_live_streaming(handle, is_live);
+  }
+  return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
+}
+
+int PlusPlayerCapiProxy::plusplayer_capi_get_dvr_seekable_range(
+    plusplayer_h handle, uint64_t* start_time_ms, uint64_t* end_time_ms) {
+  FunPlusplayerCapiGetDvrSeekableRange plusplayer_capi_get_dvr_seekable_range =
+      CallPlusplayerFunction<FunPlusplayerCapiGetDvrSeekableRange>(
+          plusplayer_capi_handle_, "plusplayer_get_dvr_seekable_range");
+  if (plusplayer_capi_get_dvr_seekable_range) {
+    return plusplayer_capi_get_dvr_seekable_range(handle, start_time_ms,
+                                                  end_time_ms);
+  }
+  return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
+}
+
+int PlusPlayerCapiProxy::plusplayer_capi_get_current_bandwidth(
+    plusplayer_h handle, uint32_t* curr_bandwidth_bps) {
+  FunPlusplayerCapiGetCurrentBandwidth plusplayer_capi_get_current_bandwidth =
+      CallPlusplayerFunction<FunPlusplayerCapiGetCurrentBandwidth>(
+          plusplayer_capi_handle_, "plusplayer_get_current_bandwidth");
+  if (plusplayer_capi_get_current_bandwidth) {
+    return plusplayer_capi_get_current_bandwidth(handle, curr_bandwidth_bps);
+  }
+  return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
+}
+
+int PlusPlayerCapiProxy::plusplayer_capi_get_track_count(
+    plusplayer_h handle, plusplayer_track_type_e track_type, int* count) {
   FunPlusplayerCapiGetTrackCount plusplayer_capi_get_track_count =
       CallPlusplayerFunction<FunPlusplayerCapiGetTrackCount>(
           plusplayer_capi_handle_, "plusplayer_get_track_count");
@@ -496,8 +530,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_get_track_count(plusplayer_h handle,
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_select_track(plusplayer_h handle,
-                                   plusplayer_track_type_e type, int index) {
+int PlusPlayerCapiProxy::plusplayer_capi_select_track(
+    plusplayer_h handle, plusplayer_track_type_e type, int index) {
   FunPlusplayerCapiSelectTrack plusplayer_capi_select_track =
       CallPlusplayerFunction<FunPlusplayerCapiSelectTrack>(
           plusplayer_capi_handle_, "plusplayer_select_track");
@@ -519,8 +553,8 @@ const char* PlusPlayerCapiProxy::plusplayer_capi_get_track_language_code(
   return nullptr;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_set_app_info(plusplayer_h handle,
-                                   const plusplayer_app_info_s* app_info) {
+int PlusPlayerCapiProxy::plusplayer_capi_set_app_info(
+    plusplayer_h handle, const plusplayer_app_info_s* app_info) {
   FunPlusplayerCapiSetAppInfo plusplayer_capi_set_app_info =
       CallPlusplayerFunction<FunPlusplayerCapiSetAppInfo>(
           plusplayer_capi_handle_, "plusplayer_set_app_info");
@@ -530,8 +564,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_set_app_info(plusplayer_h handle,
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_set_drm(plusplayer_h handle,
-                              plusplayer_drm_property_s drm_property) {
+int PlusPlayerCapiProxy::plusplayer_capi_set_drm(
+    plusplayer_h handle, plusplayer_drm_property_s drm_property) {
   FunPlusplayerCapiSetDrm plusplayer_capi_set_drm =
       CallPlusplayerFunction<FunPlusplayerCapiSetDrm>(plusplayer_capi_handle_,
                                                       "plusplayer_set_drm");
@@ -543,7 +577,7 @@ int PlusPlayerCapiProxy::plusplayer_capi_set_drm(plusplayer_h handle,
 
 int PlusPlayerCapiProxy::plusplayer_capi_set_drm_init_data_cb(
     plusplayer_h handle, plusplayer_drm_init_data_cb drm_init_data_callback,
-      void* userdata) {
+    void* userdata) {
   FunPlusplayerCapiSetDrmInitDataCb plusplayer_capi_set_drm_init_data_cb =
       CallPlusplayerFunction<FunPlusplayerCapiSetDrmInitDataCb>(
           plusplayer_capi_handle_, "plusplayer_set_drm_init_data_cb");
@@ -573,7 +607,8 @@ int PlusPlayerCapiProxy::
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_drm_license_acquired_done(plusplayer_h handle, plusplayer_track_type_e track_type) {
+int PlusPlayerCapiProxy::plusplayer_capi_drm_license_acquired_done(
+    plusplayer_h handle, plusplayer_track_type_e track_type) {
   FunPlusplayerCapiDrmLicenseAcquiredDone
       plusplayer_capi_drm_license_acquired_done =
           CallPlusplayerFunction<FunPlusplayerCapiDrmLicenseAcquiredDone>(
@@ -584,7 +619,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_drm_license_acquired_done(plusplayer_h 
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_set_subtitle_path(plusplayer_h handle, const char* uri) {
+int PlusPlayerCapiProxy::plusplayer_capi_set_subtitle_path(plusplayer_h handle,
+                                                           const char* uri) {
   FunPlusplayerCapiSetSubtitlePath plusplayer_capi_set_subtitle_path =
       CallPlusplayerFunction<FunPlusplayerCapiSetSubtitlePath>(
           plusplayer_capi_handle_, "plusplayer_set_subtitle_path");
@@ -594,8 +630,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_set_subtitle_path(plusplayer_h handle, 
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_set_video_stillmode(plusplayer_h handle,
-                                          plusplayer_still_mode_e stillmode) {
+int PlusPlayerCapiProxy::plusplayer_capi_set_video_stillmode(
+    plusplayer_h handle, plusplayer_still_mode_e stillmode) {
   FunPlusplayerCapiSetVideoStillmode plusplayer_capi_set_video_stillmode =
       CallPlusplayerFunction<FunPlusplayerCapiSetVideoStillmode>(
           plusplayer_capi_handle_, "plusplayer_set_video_stillmode");
@@ -606,8 +642,7 @@ int PlusPlayerCapiProxy::plusplayer_capi_set_video_stillmode(plusplayer_h handle
 }
 
 int PlusPlayerCapiProxy::plusplayer_capi_set_alternative_video_resource(
-    plusplayer_h handle,
-                                                     unsigned int rsc_type) {
+    plusplayer_h handle, unsigned int rsc_type) {
   FunPlusplayerCapiSetAlternativeVideoResource
       plusplayer_capi_set_alternative_video_resource =
           CallPlusplayerFunction<FunPlusplayerCapiSetAlternativeVideoResource>(
@@ -619,7 +654,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_set_alternative_video_resource(
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_get_foreach_track(plusplayer_h handle, plusplayer_track_cb track_cb, void* userdata) {
+int PlusPlayerCapiProxy::plusplayer_capi_get_foreach_track(
+    plusplayer_h handle, plusplayer_track_cb track_cb, void* userdata) {
   FunPlusplayerCapiGetForeachTrack plusplayer_capi_get_foreach_track =
       CallPlusplayerFunction<FunPlusplayerCapiGetForeachTrack>(
           plusplayer_capi_handle_, "plusplayer_get_foreach_track");
@@ -629,7 +665,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_get_foreach_track(plusplayer_h handle, 
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_get_foreach_active_track(plusplayer_h handle, plusplayer_track_cb track_cb, void* userdata) {
+int PlusPlayerCapiProxy::plusplayer_capi_get_foreach_active_track(
+    plusplayer_h handle, plusplayer_track_cb track_cb, void* userdata) {
   FunPlusplayerCapiGetForeachActiveTrack
       plusplayer_capi_get_foreach_active_track =
           CallPlusplayerFunction<FunPlusplayerCapiGetForeachActiveTrack>(
@@ -640,7 +677,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_get_foreach_active_track(plusplayer_h h
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_set_cookie(plusplayer_h handle, const char* cookie) {
+int PlusPlayerCapiProxy::plusplayer_capi_set_cookie(plusplayer_h handle,
+                                                    const char* cookie) {
   FunPlusplayerCapiSetCookie plusplayer_capi_set_cookie =
       CallPlusplayerFunction<FunPlusplayerCapiSetCookie>(
           plusplayer_capi_handle_, "plusplayer_set_cookie");
@@ -650,7 +688,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_set_cookie(plusplayer_h handle, const c
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_set_user_agent(plusplayer_h handle, const char* user_agent) {
+int PlusPlayerCapiProxy::plusplayer_capi_set_user_agent(
+    plusplayer_h handle, const char* user_agent) {
   FunPlusplayerCapiSetUserAgent plusplayer_capi_set_user_agent =
       CallPlusplayerFunction<FunPlusplayerCapiSetUserAgent>(
           plusplayer_capi_handle_, "plusplayer_set_user_agent");
@@ -660,7 +699,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_set_user_agent(plusplayer_h handle, con
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_set_resume_time(plusplayer_h handle, uint64_t resume_time_ms) {
+int PlusPlayerCapiProxy::plusplayer_capi_set_resume_time(
+    plusplayer_h handle, uint64_t resume_time_ms) {
   FunPlusplayerCapiSetResumeTime plusplayer_capi_set_resume_time =
       CallPlusplayerFunction<FunPlusplayerCapiSetResumeTime>(
           plusplayer_capi_handle_, "plusplayer_set_resume_time");
@@ -670,7 +710,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_set_resume_time(plusplayer_h handle, ui
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_get_track_index(plusplayer_track_h track, int* track_index) {
+int PlusPlayerCapiProxy::plusplayer_capi_get_track_index(
+    plusplayer_track_h track, int* track_index) {
   FunPlusplayerCapiGetTrackIndex plusplayer_capi_get_track_index =
       CallPlusplayerFunction<FunPlusplayerCapiGetTrackIndex>(
           plusplayer_capi_handle_, "plusplayer_get_track_index");
@@ -680,7 +721,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_get_track_index(plusplayer_track_h trac
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_get_track_id(plusplayer_track_h track, int* track_id) {
+int PlusPlayerCapiProxy::plusplayer_capi_get_track_id(plusplayer_track_h track,
+                                                      int* track_id) {
   FunPlusplayerCapiGetTrackId plusplayer_capi_get_track_id =
       CallPlusplayerFunction<FunPlusplayerCapiGetTrackId>(
           plusplayer_capi_handle_, "plusplayer_get_track_id");
@@ -690,7 +732,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_get_track_id(plusplayer_track_h track, 
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_get_track_mimetype(plusplayer_track_h track, const char** track_mimetype) {
+int PlusPlayerCapiProxy::plusplayer_capi_get_track_mimetype(
+    plusplayer_track_h track, const char** track_mimetype) {
   FunPlusplayerCapiGetTrackMimetype plusplayer_capi_get_track_mimetype =
       CallPlusplayerFunction<FunPlusplayerCapiGetTrackMimetype>(
           plusplayer_capi_handle_, "plusplayer_get_track_mimetype");
@@ -700,7 +743,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_get_track_mimetype(plusplayer_track_h t
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_get_track_streamtype(plusplayer_track_h track, const char** track_streamtype) {
+int PlusPlayerCapiProxy::plusplayer_capi_get_track_streamtype(
+    plusplayer_track_h track, const char** track_streamtype) {
   FunPlusplayerCapiGetTrackStreamtype plusplayer_capi_get_track_streamtype =
       CallPlusplayerFunction<FunPlusplayerCapiGetTrackStreamtype>(
           plusplayer_capi_handle_, "plusplayer_get_track_streamtype");
@@ -710,7 +754,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_get_track_streamtype(plusplayer_track_h
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_get_track_container_type(plusplayer_track_h track, const char** track_containertype) {
+int PlusPlayerCapiProxy::plusplayer_capi_get_track_container_type(
+    plusplayer_track_h track, const char** track_containertype) {
   FunPlusplayerCapiGetTrackContainerType
       plusplayer_capi_get_track_container_type =
           CallPlusplayerFunction<FunPlusplayerCapiGetTrackContainerType>(
@@ -721,7 +766,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_get_track_container_type(plusplayer_tra
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_get_track_type(plusplayer_track_h track, plusplayer_track_type_e* track_type) {
+int PlusPlayerCapiProxy::plusplayer_capi_get_track_type(
+    plusplayer_track_h track, plusplayer_track_type_e* track_type) {
   FunPlusplayerCapiGetTrackType plusplayer_capi_get_track_type =
       CallPlusplayerFunction<FunPlusplayerCapiGetTrackType>(
           plusplayer_capi_handle_, "plusplayer_get_track_type");
@@ -731,7 +777,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_get_track_type(plusplayer_track_h track
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_get_track_codec_data(plusplayer_track_h track, const char** track_codecdata) {
+int PlusPlayerCapiProxy::plusplayer_capi_get_track_codec_data(
+    plusplayer_track_h track, const char** track_codecdata) {
   FunPlusplayerCapiGetTrackCodecData plusplayer_capi_get_track_codec_data =
       CallPlusplayerFunction<FunPlusplayerCapiGetTrackCodecData>(
           plusplayer_capi_handle_, "plusplayer_get_track_codec_data");
@@ -741,7 +788,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_get_track_codec_data(plusplayer_track_h
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_get_track_codec_tag(plusplayer_track_h track, unsigned int* track_codectag) {
+int PlusPlayerCapiProxy::plusplayer_capi_get_track_codec_tag(
+    plusplayer_track_h track, unsigned int* track_codectag) {
   FunPlusplayerCapiGetTrackCodecTag plusplayer_capi_get_track_codec_tag =
       CallPlusplayerFunction<FunPlusplayerCapiGetTrackCodecTag>(
           plusplayer_capi_handle_, "plusplayer_get_track_codec_tag");
@@ -751,7 +799,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_get_track_codec_tag(plusplayer_track_h 
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_get_track_codec_data_len(plusplayer_track_h track, int* track_codecdatalen) {
+int PlusPlayerCapiProxy::plusplayer_capi_get_track_codec_data_len(
+    plusplayer_track_h track, int* track_codecdatalen) {
   FunPlusplayerCapiGetTrackCodecDataLen
       plusplayer_capi_get_track_codec_data_len =
           CallPlusplayerFunction<FunPlusplayerCapiGetTrackCodecDataLen>(
@@ -762,7 +811,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_get_track_codec_data_len(plusplayer_tra
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_get_track_width(plusplayer_track_h track, int* track_width) {
+int PlusPlayerCapiProxy::plusplayer_capi_get_track_width(
+    plusplayer_track_h track, int* track_width) {
   FunPlusplayerCapiGetTrackWidth plusplayer_capi_get_track_width =
       CallPlusplayerFunction<FunPlusplayerCapiGetTrackWidth>(
           plusplayer_capi_handle_, "plusplayer_get_track_width");
@@ -772,7 +822,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_get_track_width(plusplayer_track_h trac
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_get_track_height(plusplayer_track_h track, int* track_height) {
+int PlusPlayerCapiProxy::plusplayer_capi_get_track_height(
+    plusplayer_track_h track, int* track_height) {
   FunPlusplayerCapiGetTrackHeight plusplayer_capi_get_track_height =
       CallPlusplayerFunction<FunPlusplayerCapiGetTrackHeight>(
           plusplayer_capi_handle_, "plusplayer_get_track_height");
@@ -782,7 +833,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_get_track_height(plusplayer_track_h tra
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_get_track_maxwidth(plusplayer_track_h track, int* track_maxwidth) {
+int PlusPlayerCapiProxy::plusplayer_capi_get_track_maxwidth(
+    plusplayer_track_h track, int* track_maxwidth) {
   FunPlusplayerCapiGetTrackMaxwidth plusplayer_capi_get_track_maxwidth =
       CallPlusplayerFunction<FunPlusplayerCapiGetTrackMaxwidth>(
           plusplayer_capi_handle_, "plusplayer_get_track_maxwidth");
@@ -792,7 +844,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_get_track_maxwidth(plusplayer_track_h t
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_get_track_maxheight(plusplayer_track_h track, int* track_maxheight) {
+int PlusPlayerCapiProxy::plusplayer_capi_get_track_maxheight(
+    plusplayer_track_h track, int* track_maxheight) {
   FunPlusplayerCapiGetTrackMaxheight plusplayer_capi_get_track_maxheight =
       CallPlusplayerFunction<FunPlusplayerCapiGetTrackMaxheight>(
           plusplayer_capi_handle_, "plusplayer_get_track_maxheight");
@@ -802,7 +855,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_get_track_maxheight(plusplayer_track_h 
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_get_track_framerate_num(plusplayer_track_h track, int* track_framerate_num) {
+int PlusPlayerCapiProxy::plusplayer_capi_get_track_framerate_num(
+    plusplayer_track_h track, int* track_framerate_num) {
   FunPlusplayerCapiGetTrackFramerateNum
       plusplayer_capi_get_track_framerate_num =
           CallPlusplayerFunction<FunPlusplayerCapiGetTrackFramerateNum>(
@@ -813,7 +867,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_get_track_framerate_num(plusplayer_trac
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_get_track_framerate_den(plusplayer_track_h track, int* track_framerate_den) {
+int PlusPlayerCapiProxy::plusplayer_capi_get_track_framerate_den(
+    plusplayer_track_h track, int* track_framerate_den) {
   FunPlusplayerCapiGetTrackFramerateDen
       plusplayer_capi_get_track_framerate_den =
           CallPlusplayerFunction<FunPlusplayerCapiGetTrackFramerateDen>(
@@ -824,7 +879,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_get_track_framerate_den(plusplayer_trac
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_get_track_sample_rate(plusplayer_track_h track, int* track_sample_rate) {
+int PlusPlayerCapiProxy::plusplayer_capi_get_track_sample_rate(
+    plusplayer_track_h track, int* track_sample_rate) {
   FunPlusplayerCapiGetTrackSampleRate plusplayer_capi_get_track_sample_rate =
       CallPlusplayerFunction<FunPlusplayerCapiGetTrackSampleRate>(
           plusplayer_capi_handle_, "plusplayer_get_track_sample_rate");
@@ -834,7 +890,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_get_track_sample_rate(plusplayer_track_
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_get_track_sample_format(plusplayer_track_h track, int* track_sample_format) {
+int PlusPlayerCapiProxy::plusplayer_capi_get_track_sample_format(
+    plusplayer_track_h track, int* track_sample_format) {
   FunPlusplayerCapiGetTrackSampleFormat
       plusplayer_capi_get_track_sample_format =
           CallPlusplayerFunction<FunPlusplayerCapiGetTrackSampleFormat>(
@@ -845,7 +902,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_get_track_sample_format(plusplayer_trac
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_get_track_channels(plusplayer_track_h track, int* track_channels) {
+int PlusPlayerCapiProxy::plusplayer_capi_get_track_channels(
+    plusplayer_track_h track, int* track_channels) {
   FunPlusplayerCapiGetTrackChannels plusplayer_capi_get_track_channels =
       CallPlusplayerFunction<FunPlusplayerCapiGetTrackChannels>(
           plusplayer_capi_handle_, "plusplayer_get_track_channels");
@@ -855,7 +913,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_get_track_channels(plusplayer_track_h t
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_get_track_version(plusplayer_track_h track, int* track_version) {
+int PlusPlayerCapiProxy::plusplayer_capi_get_track_version(
+    plusplayer_track_h track, int* track_version) {
   FunPlusplayerCapiGetTrackVersion plusplayer_capi_get_track_version =
       CallPlusplayerFunction<FunPlusplayerCapiGetTrackVersion>(
           plusplayer_capi_handle_, "plusplayer_get_track_version");
@@ -865,7 +924,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_get_track_version(plusplayer_track_h tr
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_get_track_layer(plusplayer_track_h track, int* track_layer) {
+int PlusPlayerCapiProxy::plusplayer_capi_get_track_layer(
+    plusplayer_track_h track, int* track_layer) {
   FunPlusplayerCapiGetTrackLayer plusplayer_capi_get_track_layer =
       CallPlusplayerFunction<FunPlusplayerCapiGetTrackLayer>(
           plusplayer_capi_handle_, "plusplayer_get_track_layer");
@@ -875,7 +935,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_get_track_layer(plusplayer_track_h trac
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_get_track_bits_per_sample(plusplayer_track_h track, int* track_bits_per_sample) {
+int PlusPlayerCapiProxy::plusplayer_capi_get_track_bits_per_sample(
+    plusplayer_track_h track, int* track_bits_per_sample) {
   FunPlusplayerCapiGetTrackBitsPerSample
       plusplayer_capi_get_track_bits_per_sample =
           CallPlusplayerFunction<FunPlusplayerCapiGetTrackBitsPerSample>(
@@ -887,7 +948,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_get_track_bits_per_sample(plusplayer_tr
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_get_track_block_align(plusplayer_track_h track, int* track_block_align) {
+int PlusPlayerCapiProxy::plusplayer_capi_get_track_block_align(
+    plusplayer_track_h track, int* track_block_align) {
   FunPlusplayerCapiGetTrackBlockAlign plusplayer_capi_get_track_block_align =
       CallPlusplayerFunction<FunPlusplayerCapiGetTrackBlockAlign>(
           plusplayer_capi_handle_, "plusplayer_get_track_block_align");
@@ -897,7 +959,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_get_track_block_align(plusplayer_track_
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_get_track_bitrate(plusplayer_track_h track, int* track_bitrate) {
+int PlusPlayerCapiProxy::plusplayer_capi_get_track_bitrate(
+    plusplayer_track_h track, int* track_bitrate) {
   FunPlusplayerCapiGetTrackBitrate plusplayer_capi_get_track_bitrate =
       CallPlusplayerFunction<FunPlusplayerCapiGetTrackBitrate>(
           plusplayer_capi_handle_, "plusplayer_get_track_bitrate");
@@ -907,7 +970,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_get_track_bitrate(plusplayer_track_h tr
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_get_track_endianness(plusplayer_track_h track, int* track_endianness) {
+int PlusPlayerCapiProxy::plusplayer_capi_get_track_endianness(
+    plusplayer_track_h track, int* track_endianness) {
   FunPlusplayerCapiGetTrackEndianness plusplayer_capi_get_track_endianness =
       CallPlusplayerFunction<FunPlusplayerCapiGetTrackEndianness>(
           plusplayer_capi_handle_, "plusplayer_get_track_endianness");
@@ -917,7 +981,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_get_track_endianness(plusplayer_track_h
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_get_track_is_signed(plusplayer_track_h track, bool* track_is_signed) {
+int PlusPlayerCapiProxy::plusplayer_capi_get_track_is_signed(
+    plusplayer_track_h track, bool* track_is_signed) {
   FunPlusplayerCapiGetTrackIsSigned plusplayer_capi_get_track_is_signed =
       CallPlusplayerFunction<FunPlusplayerCapiGetTrackIsSigned>(
           plusplayer_capi_handle_, "plusplayer_get_track_is_signed");
@@ -927,7 +992,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_get_track_is_signed(plusplayer_track_h 
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_get_track_active(plusplayer_track_h track, bool* track_active) {
+int PlusPlayerCapiProxy::plusplayer_capi_get_track_active(
+    plusplayer_track_h track, bool* track_active) {
   FunPlusplayerCapiGetTrackActive plusplayer_capi_get_track_active =
       CallPlusplayerFunction<FunPlusplayerCapiGetTrackActive>(
           plusplayer_capi_handle_, "plusplayer_get_track_active");
@@ -937,7 +1003,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_get_track_active(plusplayer_track_h tra
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_get_track_lang_code(plusplayer_track_h track, const char** track_lang_code) {
+int PlusPlayerCapiProxy::plusplayer_capi_get_track_lang_code(
+    plusplayer_track_h track, const char** track_lang_code) {
   FunPlusplayerCapiGetTrackLangCode plusplayer_capi_get_track_lang_code =
       CallPlusplayerFunction<FunPlusplayerCapiGetTrackLangCode>(
           plusplayer_capi_handle_, "plusplayer_get_track_lang_code");
@@ -947,7 +1014,8 @@ int PlusPlayerCapiProxy::plusplayer_capi_get_track_lang_code(plusplayer_track_h 
   return PLUSPLAYER_ERROR_TYPE_UNKNOWN;
 }
 
-int PlusPlayerCapiProxy::plusplayer_capi_get_track_subtitle_format(plusplayer_track_h track, const char** track_subtitle_format) {
+int PlusPlayerCapiProxy::plusplayer_capi_get_track_subtitle_format(
+    plusplayer_track_h track, const char** track_subtitle_format) {
   FunPlusplayerCapiGetTrackSubtitleFormat
       plusplayer_capi_get_track_subtitle_format =
           CallPlusplayerFunction<FunPlusplayerCapiGetTrackSubtitleFormat>(

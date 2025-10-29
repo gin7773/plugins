@@ -79,6 +79,8 @@ typedef int (*FunPlusplayerCapiSetProperty)(plusplayer_h handle,
 typedef int (*FunPlusplayerCapiGetProperty)(plusplayer_h handle,
                                             plusplayer_property_e property,
                                             char** value);
+typedef int (*FunPlusplayerCapiGetCurrentBandwidth)(
+    plusplayer_h handle, uint32_t* curr_bandwidth_bps);
 typedef int (*FunPlusplayerCapiGetTrackCount)(
     plusplayer_h handle, plusplayer_track_type_e track_type, int* count);
 typedef int (*FunPlusplayerCapiSelectTrack)(plusplayer_h handle,
@@ -117,6 +119,11 @@ typedef int (*FunPlusplayerCapiSetUserAgent)(plusplayer_h handle,
                                              const char* user_agent);
 typedef int (*FunPlusplayerCapiSetResumeTime)(plusplayer_h handle,
                                               uint64_t resume_time_ms);
+typedef int (*FunPlusplayerCapiIsLiveStreaming)(plusplayer_h handle,
+                                                bool* is_live);
+typedef int (*FunPlusplayerCapiGetDvrSeekableRange)(plusplayer_h handle,
+                                                    uint64_t* start_time_ms,
+                                                    uint64_t* end_time_ms);
 typedef int (*FunPlusplayerCapiGetTrackIndex)(plusplayer_track_h track,
                                               int* track_index);
 typedef int (*FunPlusplayerCapiGetTrackId)(plusplayer_track_h track,
@@ -287,6 +294,12 @@ class PlusPlayerCapiProxy {
                                      const char* user_agent);
   int plusplayer_capi_set_resume_time(plusplayer_h handle,
                                       uint64_t resume_time_ms);
+  int plusplayer_capi_is_live_streaming(plusplayer_h handle, bool* is_live);
+  int plusplayer_capi_get_dvr_seekable_range(plusplayer_h handle,
+                                             uint64_t* start_time_ms,
+                                             uint64_t* end_time_ms);
+  int plusplayer_capi_get_current_bandwidth(plusplayer_h handle,
+                                            uint32_t* curr_bandwidth_bps);
   int plusplayer_capi_get_track_index(plusplayer_track_h track,
                                       int* track_index);
   int plusplayer_capi_get_track_id(plusplayer_track_h track, int* track_id);

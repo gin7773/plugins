@@ -2,8 +2,8 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-#ifndef FLUTTER_PLUGIN_PLUS_PLAYER_H_
-#define FLUTTER_PLUGIN_PLUS_PLAYER_H_
+#ifndef FLUTTER_PLUGIN_PLUSPLAYER_PLATFORM_H_
+#define FLUTTER_PLUGIN_PLUSPLAYER_PLATFORM_H_
 
 #include <flutter/plugin_registrar.h>
 
@@ -19,11 +19,11 @@
 
 namespace video_player_avplay_tizen {
 
-class PlusPlayer : public VideoPlayer {
+class PlusPlayerPlatform : public VideoPlayer {
  public:
-  explicit PlusPlayer(flutter::BinaryMessenger *messenger,
-                      FlutterDesktopViewRef flutter_view);
-  ~PlusPlayer();
+  explicit PlusPlayerPlatform(flutter::BinaryMessenger *messenger,
+                              FlutterDesktopViewRef flutter_view);
+  ~PlusPlayerPlatform();
 
   int64_t Create(const std::string &uri,
                  const CreateMessage &create_message) override;
@@ -70,14 +70,24 @@ class PlusPlayer : public VideoPlayer {
               const std::string &license_server_url);
   flutter::EncodableValue ParseVideoTrack(const plusplayer_track_h video_track);
   flutter::EncodableValue ParseAudioTrack(const plusplayer_track_h audio_track);
-  flutter::EncodableValue ParseSubtitleTrack(const plusplayer_track_h subtitle_track);
+  flutter::EncodableValue ParseSubtitleTrack(
+      const plusplayer_track_h subtitle_track);
 
   void RegisterCallback();
   void UnRegisterCallback();
   bool StopAndClose();
   bool RestorePlayer(const CreateMessage *restore_message, int64_t resume_time);
   bool GetMemento(PlayerMemento *memento);
+  std::string GetExtraStreamingProperty(
+      const std::string &streaming_property_type);
+  // Helper methods for SetStreamingProperty
+  bool IsDashFormat() const;
+  bool IsDashOnlyProperty(const std::string &type) const;
+  void SetPropertyInternal(const std::string &type, const std::string &value);
 
+  static bool TrackInfoCb(const plusplayer_track_h track_h, void *user_data);
+  static bool ActiveTrackInfoCb(const plusplayer_track_h track_h, void *user_data);
+  static bool VideoSizeInfoCb(const plusplayer_track_h track_h, void *user_data);
   static bool OnLicenseAcquired(int *drm_handle, unsigned int length,
                                 unsigned char *pssh_data, void *user_data);
   static void OnPrepareDone(bool ret, void *user_data);
@@ -99,7 +109,7 @@ class PlusPlayer : public VideoPlayer {
   static void OnAdaptiveStreamingControlEvent(
       plusplayer_streaming_message_type_e type, plusplayer_message_param_s *msg,
       void *user_data);
-  //static void OnStateChangedToPlaying(void *user_data);
+  // static void OnStateChangedToPlaying(void *user_data);
   static void OnADEventFromDash(const char *ad_data, void *user_data);
 
   plusplayer_h player_ = nullptr;
@@ -116,4 +126,4 @@ class PlusPlayer : public VideoPlayer {
 
 }  // namespace video_player_avplay_tizen
 
-#endif  // FLUTTER_PLUGIN_PLUS_PLAYER_H_
+#endif  // FLUTTER_PLUGIN_PLUSPLAYER_PLATFORM_H_
