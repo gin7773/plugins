@@ -145,9 +145,11 @@ ErrorOr<PlayerMessage> VideoPlayerTizenPlugin::Create(
 
   std::unique_ptr<VideoPlayer> player = nullptr;
   if (uri.substr(0, 4) == "http") {
+#if PLUSPLAYER_CAPI
     player = std::make_unique<PlusPlayerPlatform>(
         plugin_registrar_->messenger(),
         FlutterDesktopPluginRegistrarGetView(registrar_ref_));
+#endif
   } else {
     player = std::make_unique<MediaPlayer>(
         plugin_registrar_->messenger(),
