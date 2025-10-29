@@ -86,8 +86,10 @@ class PlusPlayerPlatform : public VideoPlayer {
   void SetPropertyInternal(const std::string &type, const std::string &value);
 
   static bool TrackInfoCb(const plusplayer_track_h track_h, void *user_data);
-  static bool ActiveTrackInfoCb(const plusplayer_track_h track_h, void *user_data);
-  static bool VideoSizeInfoCb(const plusplayer_track_h track_h, void *user_data);
+  static bool ActiveTrackInfoCb(const plusplayer_track_h track_h,
+                                void *user_data);
+  static bool VideoSizeInfoCb(const plusplayer_track_h track_h,
+                              void *user_data);
   static bool OnLicenseAcquired(int *drm_handle, unsigned int length,
                                 unsigned char *pssh_data, void *user_data);
   static void OnPrepareDone(bool ret, void *user_data);

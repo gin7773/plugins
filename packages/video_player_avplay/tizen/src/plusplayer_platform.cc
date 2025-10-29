@@ -39,17 +39,20 @@ bool PlusPlayerPlatform::TrackInfoCb(const plusplayer_track_h track_h,
                                      void *user_data) {
   UserData *data = static_cast<UserData *>(user_data);
   plusplayer_track_type_e type;
-  if (data->instance->plusplayer_capi_proxy_->plusplayer_capi_get_track_type(track_h, &type) !=
-      PLUSPLAYER_ERROR_TYPE_NONE) {
+  if (data->instance->plusplayer_capi_proxy_->plusplayer_capi_get_track_type(
+          track_h, &type) != PLUSPLAYER_ERROR_TYPE_NONE) {
     return true;  // continue iteration
   }
   if (data->type == type) {
     if (type == PLUSPLAYER_TRACK_TYPE_VIDEO) {
-      data->track_selections->push_back(data->instance->ParseVideoTrack(track_h));
+      data->track_selections->push_back(
+          data->instance->ParseVideoTrack(track_h));
     } else if (type == PLUSPLAYER_TRACK_TYPE_AUDIO) {
-      data->track_selections->push_back(data->instance->ParseAudioTrack(track_h));
+      data->track_selections->push_back(
+          data->instance->ParseAudioTrack(track_h));
     } else if (type == PLUSPLAYER_TRACK_TYPE_SUBTITLE) {
-      data->track_selections->push_back(data->instance->ParseSubtitleTrack(track_h));
+      data->track_selections->push_back(
+          data->instance->ParseSubtitleTrack(track_h));
     }
   }
   return true;
@@ -59,8 +62,8 @@ bool PlusPlayerPlatform::ActiveTrackInfoCb(const plusplayer_track_h track_h,
                                            void *user_data) {
   ActiveTrackData *data = static_cast<ActiveTrackData *>(user_data);
   plusplayer_track_type_e type;
-  if (data->instance->plusplayer_capi_proxy_->plusplayer_capi_get_track_type(track_h, &type) !=
-      PLUSPLAYER_ERROR_TYPE_NONE) {
+  if (data->instance->plusplayer_capi_proxy_->plusplayer_capi_get_track_type(
+          track_h, &type) != PLUSPLAYER_ERROR_TYPE_NONE) {
     return true;  // continue iteration
   }
   if (type == PLUSPLAYER_TRACK_TYPE_AUDIO) {
@@ -77,14 +80,16 @@ bool PlusPlayerPlatform::VideoSizeInfoCb(const plusplayer_track_h track_h,
                                          void *user_data) {
   VideoSizeData *data = static_cast<VideoSizeData *>(user_data);
   plusplayer_track_type_e type;
-  if (data->instance->plusplayer_capi_proxy_->plusplayer_capi_get_track_type(track_h, &type) !=
-      PLUSPLAYER_ERROR_TYPE_NONE) {
+  if (data->instance->plusplayer_capi_proxy_->plusplayer_capi_get_track_type(
+          track_h, &type) != PLUSPLAYER_ERROR_TYPE_NONE) {
     return true;  // continue iteration
   }
   if (type == PLUSPLAYER_TRACK_TYPE_VIDEO) {
     int w = 0, h = 0;
-    data->instance->plusplayer_capi_proxy_->plusplayer_capi_get_track_width(track_h, &w);
-    data->instance->plusplayer_capi_proxy_->plusplayer_capi_get_track_height(track_h, &h);
+    data->instance->plusplayer_capi_proxy_->plusplayer_capi_get_track_width(
+        track_h, &w);
+    data->instance->plusplayer_capi_proxy_->plusplayer_capi_get_track_height(
+        track_h, &h);
     *(data->w) = w;
     *(data->h) = h;
     *(data->found) = true;
