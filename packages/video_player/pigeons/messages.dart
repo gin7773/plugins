@@ -55,6 +55,17 @@ class MixWithOthersMessage {
   bool mixWithOthers;
 }
 
+class AudioTracksMessage {
+  AudioTracksMessage(this.audioTracks);
+  List<Map<Object?, Object?>?> audioTracks;
+}
+
+class AudioSelectTrackMessage {
+  AudioSelectTrackMessage(this.textureId, this.trackId);
+  int textureId;
+  String trackId;
+}
+
 @HostApi()
 abstract class TizenVideoPlayerApi {
   void initialize();
@@ -69,4 +80,6 @@ abstract class TizenVideoPlayerApi {
   void seekTo(PositionMessage msg);
   void pause(TextureMessage msg);
   void setMixWithOthers(MixWithOthersMessage msg);
+  AudioTracksMessage getAudioTracks(TextureMessage msg);
+  void selectAudioTrack(AudioSelectTrackMessage msg);
 }

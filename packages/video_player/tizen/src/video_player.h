@@ -46,6 +46,8 @@ class VideoPlayer {
   void Dispose();
 
   int64_t GetTextureId() { return texture_id_; }
+  flutter::EncodableList GetAudioTracks();
+  void selectAudioTrack(std::string track_id);
 
  private:
   void SendPendingEvents();

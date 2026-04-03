@@ -223,7 +223,10 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
     super.initState();
     _controller = VideoPlayerController.networkUrl(
       Uri.parse(
-        'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
+        //'https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4',
+        //'https://test-streams.mux.dev/x36xhzz/x36xhzz.m3u8',
+        //'https://samples.ffmpeg.org/MPEG-4/mp3-in-mp4/%5bA-Destiny%5d_Konjiki_no_Gash_Bell_-_65_%5b71EE362C%5d.mp4',
+        'https://gemmei.ftp.acc.umu.se/mirror/media.ccc.de/congress/2019/h264-hd/36c3-11235-eng-deu-fra-36C3_Infrastructure_Review_hd.mp4',
       ),
       closedCaptionFile: _loadCaptions(),
       videoPlayerOptions: VideoPlayerOptions(mixWithOthers: true),
@@ -233,7 +236,13 @@ class _BumbleBeeRemoteVideoState extends State<_BumbleBeeRemoteVideo> {
       setState(() {});
     });
     _controller.setLooping(true);
-    _controller.initialize();
+    //_controller.initialize();
+    _controller.initialize().then((_) {
+      setState(() {});
+      _controller.getAudioTracks();
+      _controller.selectAudioTrack('1');
+      _controller.getAudioTracks();
+    });
   }
 
   @override

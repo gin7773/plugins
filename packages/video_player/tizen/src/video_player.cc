@@ -398,6 +398,118 @@ int32_t VideoPlayer::GetPosition() {
   return position;
 }
 
+flutter::EncodableList VideoPlayer::GetAudioTracks() {
+  LOG_DEBUG("[VideoPlayer] Getting audio tracks.");
+
+  flutter::EncodableList audio_track_result = {};
+  int track_count = 0;
+  int ret = player_get_track_count(player_, PLAYER_STREAM_TYPE_AUDIO, &track_count);
+  if (ret != PLAYER_ERROR_NONE) {
+    LOG_ERROR("[VideoPlayer] player_get_track_count failed: %s", get_error_message(ret));
+    return audio_track_result;
+  }
+
+  LOG_DEBUG("[VideoPlayer] Audio track count: %d", track_count);
+
+  int current_track_index = 0;
+  ret = player_get_current_track(player_, PLAYER_STREAM_TYPE_AUDIO, &current_track_index);
+  if (ret != PLAYER_ERROR_NONE) {
+    LOG_ERROR("[VideoPlayer] player_get_current_track failed: %s", get_error_message(ret));
+    return audio_track_result;
+  }
+  
+  LOG_DEBUG("[VideoPlayer] Current audio track index: %d", current_track_index);
+
+  for (int i = 0; i < track_count; i++) {
+    flutter::EncodableMap track_info;
+    
+    char* language_code = nullptr;
+    ret = player_get_track_language_code(player_, PLAYER_STREAM_TYPE_AUDIO, i, &language_code);
+    if (ret != PLAYER_ERROR_NONE) {
+      LOG_ERROR("[VideoPlayer] player_get_track_language_code failed for track %d: %s", 
+                i, get_error_message(ret));
+      language_code = strdup("und");
+    }
+    
+    std::string language(language_code ? language_code : "und");
+    
+    // TODO
+    std::string label = language;
+    std::transform(label.begin(), label.end(), label.begin(), ::toupper);
+    
+    if (language_code) {
+      free(language_code);
+    }
+
+    track_info[flutter::EncodableValue("id")] = flutter::EncodableValue(std::to_string(i));
+    track_info[flutter::EncodableValue("label")] = flutter::EncodableValue(label);
+    track_info[flutter::EncodableValue("language")] = flutter::EncodableValue(language);
+    track_info[flutter::EncodableValue("isSelected")] = flutter::EncodableValue(i == current_track_index);
+    
+    audio_track_result.push_back(flutter::EncodableValue(track_info));
+    
+    LOG_INFO("[VideoPlayer] TrackID %d - label: %s, language: %s, isSelected: %d",
+              i, label.c_str(), language.c_str(), i == current_track_index);
+  }
+  
+  return audio_track_result;
+}
+
+void VideoPlayer::selectAudioTrack(std::string track_id) {
+  LOG_DEBUG("[VideoPlayer] Selecting audio track.");
+
+  player_state_e state = PLAYER_STATE_NONE;
+  int ret = player_get_state(player_, &state);
+  if (ret != PLAYER_ERROR_NONE) {
+    LOG_ERROR("[VideoPlayer] player_get_state failed: %s", get_error_message(ret));
+    throw VideoPlayerError("player_get_state failed", get_error_message(ret));
+  }
+  
+  LOG_DEBUG("[VideoPlayer] Player state: %s", StateToString(state).c_str());
+  
+  if (state != PLAYER_STATE_READY && state != PLAYER_STATE_PLAYING && state != PLAYER_STATE_PAUSED) {
+    LOG_ERROR("[VideoPlayer] Player is not in a valid state for selecting audio track: %s", 
+              StateToString(state).c_str());
+    throw VideoPlayerError("Invalid player state", 
+                          "Player must be in READY, PLAYING or PAUSED state to select audio track");
+  }
+  
+  int track_index = 0;
+  try {
+    track_index = std::stoi(track_id);
+  } catch (const std::exception& e) {
+    LOG_ERROR("[VideoPlayer] Failed to convert track id to integer: %s, error: %s", 
+              track_id.c_str(), e.what());
+    throw VideoPlayerError("Invalid trackId", "trackId must be a valid integer string");
+  }
+  
+  LOG_DEBUG("[VideoPlayer] Selecting audio track index: %d", track_index);
+  
+  int track_count = 0;
+  ret = player_get_track_count(player_, PLAYER_STREAM_TYPE_AUDIO, &track_count);
+  if (ret != PLAYER_ERROR_NONE) {
+    LOG_ERROR("[VideoPlayer] player_get_track_count failed: %s", get_error_message(ret));
+    throw VideoPlayerError("player_get_track_count failed", get_error_message(ret));
+  }
+  
+  LOG_DEBUG("[VideoPlayer] Total audio track count: %d", track_count);
+  
+  if (track_index < 0 || track_index >= track_count) {
+    LOG_ERROR("[VideoPlayer] Invalid track index: %d, valid range is [0, %d)", 
+              track_index, track_count);
+    throw VideoPlayerError("Invalid track index", 
+                          "track index is out of valid range");
+  }
+  
+  ret = player_select_track(player_, PLAYER_STREAM_TYPE_AUDIO, track_index);
+  if (ret != PLAYER_ERROR_NONE) {
+    LOG_ERROR("[VideoPlayer] player_select_track failed: %s", get_error_message(ret));
+    throw VideoPlayerError("player_select_track failed", get_error_message(ret));
+  }
+  
+  LOG_INFO("[VideoPlayer] Successfully selected audio track: %d", track_index);
+}
+
 void VideoPlayer::Dispose() {
   LOG_DEBUG("[VideoPlayer] Player disposing.");
 
