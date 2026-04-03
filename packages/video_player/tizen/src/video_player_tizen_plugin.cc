@@ -42,8 +42,10 @@ class VideoPlayerTizenPlugin : public flutter::Plugin,
       const PositionMessage &msg,
       std::function<void(std::optional<FlutterError> reply)> result) override;
   std::optional<FlutterError> Pause(const TextureMessage &msg) override;
-  ErrorOr <AudioTracksMessage> GetAudioTracks(const TextureMessage &msg) override;
-  std::optional<FlutterError> SelectAudioTrack(const AudioSelectTrackMessage &msg) override;
+  ErrorOr<AudioTracksMessage> GetAudioTracks(
+      const TextureMessage &msg) override;
+  std::optional<FlutterError> SelectAudioTrack(
+      const AudioSelectTrackMessage &msg) override;
   std::optional<FlutterError> SetMixWithOthers(
       const MixWithOthersMessage &msg) override;
 
@@ -242,7 +244,8 @@ void VideoPlayerTizenPlugin::SeekTo(
   }
 }
 
-ErrorOr<AudioTracksMessage> VideoPlayerTizenPlugin::GetAudioTracks(const TextureMessage &msg) {
+ErrorOr<AudioTracksMessage> VideoPlayerTizenPlugin::GetAudioTracks(
+    const TextureMessage &msg) {
   auto iter = players_.find(msg.texture_id());
   if (iter == players_.end()) {
     return FlutterError("Invalid argument", "Player not found.");
@@ -259,7 +262,8 @@ ErrorOr<AudioTracksMessage> VideoPlayerTizenPlugin::GetAudioTracks(const Texture
   return result;
 }
 
-std::optional<FlutterError> VideoPlayerTizenPlugin::SelectAudioTrack(const AudioSelectTrackMessage &msg) {
+std::optional<FlutterError> VideoPlayerTizenPlugin::SelectAudioTrack(
+    const AudioSelectTrackMessage &msg) {
   auto iter = players_.find(msg.texture_id());
   if (iter == players_.end()) {
     return FlutterError("Invalid argument", "Player not found.");
