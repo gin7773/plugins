@@ -1,3 +1,13 @@
+## 3.1.8
+
+* Update audioplayers to 6.8.1.
+* Update audioplayers_platform_interface to 7.2.0.
+* Update minimum Flutter to 3.44.
+
+## 3.1.7
+
+* Add an `implements` entry to the pubspec to improve discoverability on pub.dev.
+
 ## 3.1.6
 
 * Update analysis_options.yaml for Flutter 3.47.0.

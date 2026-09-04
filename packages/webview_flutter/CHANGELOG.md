@@ -1,3 +1,11 @@
+## 0.10.4
+
+* Fix a black screen issue on Tizen 6.5 TV devices.
+
+## 0.10.3
+
+* Add an `implements` entry to the pubspec to improve discoverability on pub.dev.
+
 ## 0.10.2
 
 * Update the repository URL to use the `main` branch.

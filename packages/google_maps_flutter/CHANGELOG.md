@@ -1,3 +1,13 @@
+## 0.2.3
+
+* Update google_maps_flutter to 2.18.0.
+* Update google_maps_flutter_platform_interface to 2.16.0.
+* Updates minimum supported SDK version to Flutter 3.38/Dart 3.10.
+
+## 0.2.2
+
+* Add an `implements` entry to the pubspec to improve discoverability on pub.dev.
+
 ## 0.2.1
 
 * Update the repository URL to use the `main` branch.
