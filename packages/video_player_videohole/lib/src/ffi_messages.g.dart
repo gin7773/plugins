@@ -19,7 +19,6 @@ class TrackMessage {
   int playerId;
   List<Map<Object?, Object?>?> tracks;
 
-  /// Convert to JSON string for FFI call
   String toJson() {
     final Map<String, dynamic> jsonMap = <String, dynamic>{
       'playerId': playerId,
@@ -28,7 +27,6 @@ class TrackMessage {
     return jsonEncode(jsonMap);
   }
 
-  /// Create from JSON string
   static TrackMessage fromJson(String jsonString) {
     final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
     return TrackMessage(
@@ -59,7 +57,6 @@ class CreateMessage {
   Map<Object?, Object?>? drmConfigs;
   Map<Object?, Object?>? playerOptions;
 
-  /// Convert to JSON string for FFI call
   String toJson() {
     final Map<String, dynamic> jsonMap = <String, dynamic>{};
     if (asset != null && asset!.isNotEmpty) jsonMap['asset'] = asset;
@@ -77,7 +74,6 @@ class CreateMessage {
     return jsonEncode(jsonMap);
   }
 
-  /// Create from JSON string
   static CreateMessage fromJson(String jsonString) {
     final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
     return CreateMessage(
@@ -99,7 +95,6 @@ class DurationMessage {
   int playerId;
   List<int?>? durationRange;
 
-  /// Convert to JSON string for FFI call
   String toJson() {
     final Map<String, dynamic> jsonMap = <String, dynamic>{
       'playerId': playerId,
@@ -108,8 +103,6 @@ class DurationMessage {
     return jsonEncode(jsonMap);
   }
 
-  /// Create from JSON string
-  /// C++ returns: {"playerId": <int>, "durationRange": [<start>, <end>]}
   static DurationMessage fromJson(String jsonString) {
     final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
     return DurationMessage(
@@ -120,8 +113,6 @@ class DurationMessage {
     );
   }
 }
-
-// ===== FFI Type Definitions =====
 
 typedef _FFIInitializeNative = ffi.Int32 Function();
 typedef _FFIInitializeDart = int Function();
@@ -188,17 +179,12 @@ typedef _FFISetMixWithOthersDart = int Function(bool);
 typedef _FFISuspendNative = ffi.Int32 Function(ffi.Int64);
 typedef _FFISuspendDart = int Function(int);
 
-// P0-3 fix: restore returns int (0 on success, -1 on failure)
-// Player ID remains unchanged after restore
 typedef _FFIRestoreNative = ffi.Int32 Function(
     ffi.Int64, ffi.Pointer<ffi.Char>, ffi.Int64);
 typedef _FFIRestoreDart = int Function(int, ffi.Pointer<ffi.Char>, int);
 
-// P0-1 fix: FFI string memory management
 typedef _FFIFreeStringNative = ffi.Void Function(ffi.Pointer<ffi.Char>);
 typedef _FFIFreeStringDart = void Function(ffi.Pointer<ffi.Char>);
-
-// ===== Helper Functions =====
 
 ffi.Pointer<ffi.Char> _toPointer(String? str) {
   if (str == null) return ffi.nullptr;
@@ -206,7 +192,7 @@ ffi.Pointer<ffi.Char> _toPointer(String? str) {
   final result = calloc.allocate<ffi.Uint8>(units.length + 1);
   final Uint8List nativeString = result.asTypedList(units.length + 1);
   nativeString.setAll(0, units);
-  nativeString[units.length] = 0; // null terminator
+  nativeString[units.length] = 0;
   return result.cast<ffi.Char>();
 }
 
@@ -215,8 +201,6 @@ void _freePointer(ffi.Pointer<ffi.Char> ptr) {
     calloc.free(ptr);
   }
 }
-
-// ===== FFI Bindings =====
 
 class VideoPlayerFFIBindings {
   static VideoPlayerFFIBindings? _instance;
@@ -241,14 +225,11 @@ class VideoPlayerFFIBindings {
   late int Function(int, int, int, int, int) _ffiSetDisplayGeometry;
   late int Function(int, int) _ffiSetDisplayRotate;
   late int Function(int) _ffiSuspend;
-  // P0-3 fix: restore returns int (0 on success, -1 on failure)
   late int Function(int, ffi.Pointer<ffi.Char>, int) _ffiRestore;
   late int Function(int) _ffiSetActivate;
   late int Function(int) _ffiSetDeactivate;
   late int Function(bool) _ffiSetMixWithOthers;
-  // P0-1 fix: FFI string memory management
   late void Function(ffi.Pointer<ffi.Char>) _ffiFreeString;
-  // Global Dart port registration
   late void Function(int) _ffiRegisterDartPort;
   late void Function() _ffiUnregisterDartPort;
 
@@ -259,13 +240,10 @@ class VideoPlayerFFIBindings {
 
   VideoPlayerFFIBindings._();
 
-  /// Load the native library - must be called before using FFI functions
   void load() {
     if (_lib != null) return;
 
     try {
-      // On Tizen, the plugin is statically linked, so we use process() to access
-      // symbols from the main executable
       _lib = ffi.DynamicLibrary.process();
 
       _ffiInitialize = _lib!
@@ -363,7 +341,6 @@ class VideoPlayerFFIBindings {
           .lookup<ffi.NativeFunction<_FFIFreeStringNative>>('ffi_free_string')
           .asFunction<_FFIFreeStringDart>();
 
-      // Global Dart port registration
       _ffiRegisterDartPort = _lib!
           .lookup<ffi.NativeFunction<_FFIRegisterEventPortNative>>(
               'ffi_register_dart_port')
@@ -384,10 +361,7 @@ class VideoPlayerFFIBindings {
   bool get isLoaded => _lib != null;
 }
 
-// ===== FFI API Class =====
-
 class VideoPlayerVideoholeFFIApi {
-  /// Initialize the FFI bindings
   int initialize() {
     final bindings = VideoPlayerFFIBindings.instance;
     if (!bindings.isLoaded) {
@@ -396,7 +370,6 @@ class VideoPlayerVideoholeFFIApi {
     return bindings._ffiInitialize();
   }
 
-  /// Create using CreateMessage object (two-phase: call prepare() separately)
   int create(CreateMessage message) {
     final bindings = VideoPlayerFFIBindings.instance;
     if (!bindings.isLoaded) {
@@ -411,7 +384,6 @@ class VideoPlayerVideoholeFFIApi {
     }
   }
 
-  /// Prepare the player for playback (two-phase initialization)
   int prepare(int playerId) {
     final bindings = VideoPlayerFFIBindings.instance;
     if (!bindings.isLoaded) {
@@ -420,7 +392,6 @@ class VideoPlayerVideoholeFFIApi {
     return bindings._ffiPrepare(playerId);
   }
 
-  /// Restore using CreateMessage object
   int restore(int playerId, CreateMessage? message, int resumeTime) {
     final bindings = VideoPlayerFFIBindings.instance;
     if (!bindings.isLoaded) {
@@ -627,8 +598,6 @@ class VideoPlayerVideoholeFFIApi {
     return bindings._ffiSetMixWithOthers(mixWithOthers);
   }
 }
-
-// ===== FFI Event Port Section - Using Dart_PostCObject_DL =====
 
 typedef _FFIInitializeApiDlNative = ffi.Int32 Function(ffi.Pointer<ffi.Void>);
 typedef _FFIInitializeApiDlDart = int Function(ffi.Pointer<ffi.Void>);

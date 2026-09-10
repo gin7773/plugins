@@ -173,7 +173,6 @@ abstract class VideoPlayerPlatform extends PlatformInterface {
   }
 
   /// Restores the player state when the application is resumed.
-  /// Player ID remains unchanged after restore.
   Future<void> restore(
     int playerId, {
     DataSource? dataSource,

@@ -30,7 +30,6 @@ class VideoPlayerTizen extends VideoPlayerPlatform {
 
   @override
   Future<void> init() async {
-    // Use FFI for initialization (synchronous call)
     final int result = _ffiApi.initialize();
     if (result != 0) {
       throw PlatformException(
@@ -50,7 +49,6 @@ class VideoPlayerTizen extends VideoPlayerPlatform {
       ),
     );
 
-    // Close the StreamController for this player
     final StreamController<VideoEvent>? controller = _eventControllers.remove(
       playerId,
     );
@@ -58,18 +56,11 @@ class VideoPlayerTizen extends VideoPlayerPlatform {
       await controller.close();
     }
 
-    // Use FFI for dispose (synchronous call)
-    final int result = _ffiApi.dispose(playerId);
-    // Don't throw on error - just return
-    // The player may already be disposed or in an invalid state
-    if (result != 0) {
-      return;
-    }
+    _ffiApi.dispose(playerId);
   }
 
   @override
   Future<int?> create(DataSource dataSource) async {
-    // Ensure the global event port is registered
     _ensureEventPortRegistered();
 
     final CreateMessage message = CreateMessage();
@@ -112,19 +103,12 @@ class VideoPlayerTizen extends VideoPlayerPlatform {
     }
   }
 
-  /// Ensure the event port is registered before any events are sent
   void _ensureEventPortRegistered() {
-    // Always rebind the event port for this instance to ensure events
-    // are routed to the correct _eventControllers map.
-    // This fixes the issue where VideoPlayerPlatform.instance replacement
-    // would cause events to be routed to the old instance's controllers.
     if (_eventPort == null) {
-      // Initialize Dart API DL before using Dart_PostCObject_DL
       ffiInitializeApiDL();
 
       _eventPort = RawReceivePort();
 
-      // Listen to FFI events and route them to this instance's StreamControllers
       _eventPort!.handler = (dynamic message) {
         try {
           if (message is List && message.length == 2) {
@@ -134,7 +118,6 @@ class VideoPlayerTizen extends VideoPlayerPlatform {
             final Map<String, dynamic> eventMap =
                 jsonDecode(eventJson) as Map<String, dynamic>;
 
-            // Handle seekCompleted event first (before controller check)
             if (eventMap['event'] == 'seekCompleted') {
               _handleSeekCompleted(receivingPlayerId);
               return;
@@ -143,7 +126,6 @@ class VideoPlayerTizen extends VideoPlayerPlatform {
             final StreamController<VideoEvent>? controller =
                 _eventControllers[receivingPlayerId];
 
-            // Handle error events by adding them as stream errors
             if (eventMap['event'] == 'error') {
               final PlatformException exception = PlatformException(
                 code: eventMap['code'] as String? ?? 'unknown',
@@ -176,14 +158,12 @@ class VideoPlayerTizen extends VideoPlayerPlatform {
         }
       };
 
-      // Register the port with C++ side using FFI
       ffiRegisterEventPort(_eventPort!.nativePort);
     }
   }
 
   @override
   Future<void> setLooping(int playerId, bool looping) async {
-    // Use FFI for setLooping (synchronous call)
     final int result = _ffiApi.setLooping(playerId, looping);
     if (result != 0) {
       throw PlatformException(
@@ -195,7 +175,6 @@ class VideoPlayerTizen extends VideoPlayerPlatform {
 
   @override
   Future<void> play(int playerId) async {
-    // Use FFI for play (synchronous call)
     final int result = _ffiApi.play(playerId);
     if (result != 0) {
       throw PlatformException(
@@ -207,7 +186,6 @@ class VideoPlayerTizen extends VideoPlayerPlatform {
 
   @override
   Future<bool> setActivate(int playerId) async {
-    // Use FFI for setActivate (synchronous call)
     final int result = _ffiApi.setActivate(playerId);
     if (result != 0) {
       throw PlatformException(
@@ -220,7 +198,6 @@ class VideoPlayerTizen extends VideoPlayerPlatform {
 
   @override
   Future<bool> setDeactivate(int playerId) async {
-    // Use FFI for setDeactivate (synchronous call)
     final int result = _ffiApi.setDeactivate(playerId);
     if (result != 0) {
       throw PlatformException(
@@ -233,7 +210,6 @@ class VideoPlayerTizen extends VideoPlayerPlatform {
 
   @override
   Future<void> pause(int playerId) async {
-    // Use FFI for pause (synchronous call)
     final int result = _ffiApi.pause(playerId);
     if (result != 0) {
       throw PlatformException(
@@ -245,7 +221,6 @@ class VideoPlayerTizen extends VideoPlayerPlatform {
 
   @override
   Future<void> setVolume(int playerId, double volume) async {
-    // Use FFI for setVolume (synchronous call)
     final int result = _ffiApi.setVolume(playerId, volume);
     if (result != 0) {
       throw PlatformException(
@@ -257,7 +232,6 @@ class VideoPlayerTizen extends VideoPlayerPlatform {
 
   @override
   Future<void> setPlaybackSpeed(int playerId, double speed) async {
-    // Use FFI for setPlaybackSpeed (synchronous call)
     assert(speed > 0);
     final int result = _ffiApi.setPlaybackSpeed(playerId, speed);
     if (result != 0) {
@@ -275,7 +249,6 @@ class VideoPlayerTizen extends VideoPlayerPlatform {
     final Completer<void> completer = Completer<void>();
 
     if (_activeSeeks.containsKey(playerId)) {
-      // There's an active seek, update pending seek
       final _SeekOperation pendingSeek = _pendingSeeks.putIfAbsent(
         playerId,
         () =>
@@ -355,7 +328,6 @@ class VideoPlayerTizen extends VideoPlayerPlatform {
 
   @override
   Future<bool> setTrackSelection(int playerId, Track track) async {
-    // Use FFI for setTrackSelection (synchronous call)
     final int result = _ffiApi.setTrackSelection(
       playerId,
       track.trackId,
@@ -372,7 +344,6 @@ class VideoPlayerTizen extends VideoPlayerPlatform {
 
   @override
   Future<DurationRange> getDuration(int playerId) async {
-    // Use FFI for getDuration (synchronous call)
     final DurationMessage message = _ffiApi.duration(playerId);
     return DurationRange(
       Duration(milliseconds: message.durationRange?[0] ?? 0),
@@ -382,7 +353,6 @@ class VideoPlayerTizen extends VideoPlayerPlatform {
 
   @override
   Future<Duration> getPosition(int playerId) async {
-    // Use FFI for getPosition (synchronous call)
     final int positionMs = _ffiApi.getPosition(playerId);
     if (positionMs < 0) {
       throw PlatformException(
@@ -393,13 +363,8 @@ class VideoPlayerTizen extends VideoPlayerPlatform {
     return Duration(milliseconds: positionMs);
   }
 
-  // Instance RawReceivePort for FFI event notifications (not static!)
-  // Using instance port ensures that when VideoPlayerPlatform.instance
-  // is replaced, the new instance has its own port that routes events
-  // to its own _eventControllers map.
   RawReceivePort? _eventPort;
 
-  // Map of playerId to StreamController for broadcasting events
   final Map<int, StreamController<VideoEvent>> _eventControllers =
       <int, StreamController<VideoEvent>>{};
 
@@ -410,7 +375,6 @@ class VideoPlayerTizen extends VideoPlayerPlatform {
   Stream<VideoEvent> videoEventsFor(int playerId) {
     _ensureEventPortRegistered();
 
-    // Return the stream for this specific player
     return _eventControllers
         .putIfAbsent(playerId, () => StreamController<VideoEvent>.broadcast())
         .stream;
@@ -472,7 +436,6 @@ class VideoPlayerTizen extends VideoPlayerPlatform {
 
   @override
   Future<void> setMixWithOthers(bool mixWithOthers) async {
-    // Use FFI for setMixWithOthers (synchronous call)
     final int result = _ffiApi.setMixWithOthers(mixWithOthers);
     if (result != 0) {
       throw PlatformException(
@@ -490,7 +453,6 @@ class VideoPlayerTizen extends VideoPlayerPlatform {
     int width,
     int height,
   ) async {
-    // Use FFI for setDisplayGeometry (synchronous call)
     final int result = _ffiApi.setDisplayGeometry(
       playerId,
       x,
@@ -508,7 +470,6 @@ class VideoPlayerTizen extends VideoPlayerPlatform {
 
   @override
   Future<void> suspend(int playerId) async {
-    // Use FFI for suspend (synchronous call)
     final int result = _ffiApi.suspend(playerId);
     if (result != 0) {
       throw PlatformException(
@@ -524,8 +485,6 @@ class VideoPlayerTizen extends VideoPlayerPlatform {
     DataSource? dataSource,
     int resumeTime = -1,
   }) async {
-    // Use FFI for restore (synchronous call)
-    // Use CreateMessage class (JSON conversion handled internally)
     CreateMessage? message;
     if (dataSource != null) {
       message = CreateMessage();
@@ -546,8 +505,6 @@ class VideoPlayerTizen extends VideoPlayerPlatform {
       }
     }
 
-    // P0-3 fix: restore returns void, player ID remains unchanged
-    // FFI restore returns 0 on success, -1 on failure
     final int result = _ffiApi.restore(playerId, message, resumeTime);
     if (result != 0) {
       throw PlatformException(
@@ -555,12 +512,10 @@ class VideoPlayerTizen extends VideoPlayerPlatform {
         message: 'FFI restore failed with code: $result',
       );
     }
-    // Player ID remains unchanged, no StreamController update needed
   }
 
   @override
   Future<bool> setDisplayRotate(int playerId, DisplayRotation rotation) async {
-    // Use FFI for setDisplayRotate (synchronous call)
     final int result = _ffiApi.setDisplayRotate(playerId, rotation.index);
     if (result != 0) {
       throw PlatformException(
@@ -681,9 +636,9 @@ class VideoPlayerTizen extends VideoPlayerPlatform {
 
   static const Map<VideoFormat, String> _videoFormatStringMap =
       <VideoFormat, String>{
-        VideoFormat.ss: 'ss',
-        VideoFormat.hls: 'hls',
-        VideoFormat.dash: 'dash',
-        VideoFormat.other: 'other',
-      };
+    VideoFormat.ss: 'ss',
+    VideoFormat.hls: 'hls',
+    VideoFormat.dash: 'dash',
+    VideoFormat.other: 'other',
+  };
 }

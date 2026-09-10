@@ -2,9 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// FFI API header for video_player_tizen
-// This file contains all FFI function declarations and message types
-
 #ifndef FFI_MESSAGES_H_
 #define FFI_MESSAGES_H_
 
@@ -60,11 +57,8 @@ FLUTTER_PLUGIN_EXPORT int ffi_set_activate(int64_t player_id);
 FLUTTER_PLUGIN_EXPORT int ffi_set_deactivate(int64_t player_id);
 FLUTTER_PLUGIN_EXPORT int ffi_set_mix_with_others(bool mix_with_others);
 
-// Dispose all players (called when plugin is destroyed)
-// Internal function - called from C++ plugin destructor, not exported
 void ffi_dispose_all_players();
 
-// FFI event port functions
 FLUTTER_PLUGIN_EXPORT int ffi_initialize_api_dl(void* data);
 FLUTTER_PLUGIN_EXPORT void ffi_register_dart_port(int64_t port);
 FLUTTER_PLUGIN_EXPORT void ffi_unregister_dart_port();
@@ -73,8 +67,6 @@ FLUTTER_PLUGIN_EXPORT void ffi_free_string(char* ptr);
 
 #ifdef __cplusplus
 }  // extern "C"
-
-// ===== Message types for C++ usage =====
 
 namespace video_player_videohole_tizen {
 
@@ -123,19 +115,6 @@ class CreateMessage {
   flutter::EncodableMap player_options_;
 };
 
-}  // namespace video_player_videohole_tizen
-
-#endif  // __cplusplus
-
-// ===== Internal API for plugin registration (not part of public FFI) =====
-// Only ffi_set_plugin_registrar is exposed; all other helpers are internal
-// to ffi_messages.cc
-#ifdef __cplusplus
-namespace video_player_videohole_tizen {
-
-// Set plugin registrar reference (called during plugin registration)
-// This is the ONLY public internal API; everything else is static in
-// ffi_messages.cc
 void ffi_set_plugin_registrar(FlutterDesktopPluginRegistrarRef registrar_ref,
                               flutter::PluginRegistrar* registrar);
 

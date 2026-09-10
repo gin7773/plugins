@@ -14,9 +14,6 @@
 
 namespace video_player_videohole_tizen {
 
-// Plugin class that manages lifecycle and ensures proper cleanup
-// This fixes the issue where global resources (g_players, event port, etc.)
-// could outlive the Flutter engine if the host process isn't terminated.
 class VideoPlayerTizenPlugin : public flutter::Plugin {
  public:
   static void RegisterWithRegistrar(
@@ -29,7 +26,6 @@ class VideoPlayerTizenPlugin : public flutter::Plugin {
   explicit VideoPlayerTizenPlugin(
       FlutterDesktopPluginRegistrarRef registrar_ref)
       : registrar_ref_(registrar_ref) {
-    // Inject registrar reference into FFI layer
     auto* plugin_registrar =
         flutter::PluginRegistrarManager::GetInstance()
             ->GetRegistrar<flutter::PluginRegistrar>(registrar_ref);
@@ -41,13 +37,9 @@ class VideoPlayerTizenPlugin : public flutter::Plugin {
   ~VideoPlayerTizenPlugin() override {
     LOG_INFO(
         "[VideoPlayerTizenPlugin] Destroying plugin, cleaning up resources");
-    // Clean up all players when the plugin is destroyed
-    // This ensures g_players and associated resources are properly released
-    // when the Flutter engine is destroyed
     ffi_dispose_all_players();
   }
 
-  // Prevent copying
   VideoPlayerTizenPlugin(const VideoPlayerTizenPlugin&) = delete;
   VideoPlayerTizenPlugin& operator=(const VideoPlayerTizenPlugin&) = delete;
 

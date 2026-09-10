@@ -49,7 +49,6 @@ MediaPlayer::MediaPlayer(flutter::BinaryMessenger *messenger,
 
 MediaPlayer::~MediaPlayer() { Dispose(); }
 
-// Static counter for generating unique player IDs
 static int64_t player_id_counter = 1;
 
 int64_t MediaPlayer::Create(const std::string &uri,
@@ -63,7 +62,6 @@ int64_t MediaPlayer::Create(const std::string &uri,
     return -1;
   }
 
-  // Only allocate new ID if not reusing or if this is the first creation
   if (!reuse_existing_id || player_id_ <= 0) {
     player_id_ = player_id_counter++;
     LOG_INFO("[MediaPlayer] Allocated new player_id=%lld",
@@ -172,9 +170,6 @@ int64_t MediaPlayer::Create(const std::string &uri,
     return -1;
   }
 
-  // Two-phase: player_prepare_async is now called in Prepare() method
-  // Create() only sets up the player without starting prepare
-
   return player_id_;
 }
 
@@ -243,7 +238,7 @@ bool MediaPlayer::Play() {
   }
   if (state == PLAYER_STATE_PLAYING) {
     LOG_INFO("[MediaPlayer] Player already playing.");
-    return true;  // Already playing, not an error
+    return true;
   }
 
   ret = player_start(player_);
@@ -803,8 +798,6 @@ bool MediaPlayer::Suspend() {
     }
     LOG_INFO("[MediaPlayer] Player called in IDLE state, so stop the player.");
   } else if (player_state == PLAYER_STATE_PLAYING) {
-    // Only call pause when current state is PLAYING, and preserve pre_state_ as
-    // PLAYING
     LOG_INFO("[MediaPlayer] Player calling pause from suspend.");
     if (!Pause()) {
       LOG_ERROR(
@@ -823,33 +816,6 @@ bool MediaPlayer::Suspend() {
 bool MediaPlayer::Restore(const CreateMessage *restore_message,
                           int64_t resume_time) {
   LOG_INFO("[MediaPlayer] Restore is called.");
-
-  if (!player_) {
-    return RestorePlayer(restore_message, resume_time);
-  }
-
-  if (restore_message->uri()) {
-    LOG_INFO("[MediaPlayer] Restore URL is not emptpy, recreate the player.");
-    return RestorePlayer(restore_message, resume_time);
-  }
-
-  player_state_e player_state = PLAYER_STATE_NONE;
-  int ret = player_get_state(player_, &player_state);
-  if (ret != PLAYER_ERROR_NONE) {
-    LOG_ERROR("[MediaPlayer] Player get state failed: %s",
-              get_error_message(ret));
-    return RestorePlayer(restore_message, resume_time);
-  }
-
-  bool is_playing = player_state == PLAYER_STATE_PLAYING;
-  bool is_paused_by_user =
-      player_state == PLAYER_STATE_PAUSED && pre_state_ != PLAYER_STATE_PLAYING;
-
-  if (is_playing || is_paused_by_user) {
-    LOG_INFO("[MediaPlayer] Keep current player.");
-    return true;
-  }
-
   return RestorePlayer(restore_message, resume_time);
 }
 
@@ -857,7 +823,6 @@ bool MediaPlayer::RestorePlayer(const CreateMessage *restore_message,
                                 int64_t resume_time) {
   LOG_INFO("[MediaPlayer] RestorePlayer is called.");
 
-  // Clean up old player first to avoid state conflicts
   if (player_ && !StopAndDestroy()) {
     LOG_ERROR("[MediaPlayer] RestorePlayer: StopAndDestroy failed.");
     return false;
@@ -882,20 +847,14 @@ bool MediaPlayer::RestorePlayer(const CreateMessage *restore_message,
 
   is_restored_ = true;
 
-  // Reuse current player_id_ by passing reuse_existing_id = true
-  int64_t result = Create(url_, create_message_, true);
-  if (result < 0) {
+  if (Create(url_, create_message_, true) < 0) {
     LOG_ERROR("[MediaPlayer] Fail to create player.");
     is_restored_ = false;
     return false;
   }
 
-  // Call Prepare() after RestorePlayer to ensure player is ready.
-  // This is needed because Create() in two-phase mode does not call
-  // prepare_async.
   LOG_INFO("[MediaPlayer] RestorePlayer: calling Prepare() after Create().");
-  int prepare_result = Prepare();
-  if (prepare_result < 0) {
+  if (Prepare() < 0) {
     LOG_ERROR("[MediaPlayer] RestorePlayer: Prepare() failed.");
     is_restored_ = false;
     return false;
@@ -939,14 +898,12 @@ void MediaPlayer::OnPrepared(void *user_data) {
     return;
   }
 
-  // Reset event dispatch state for restored player
   if (self->is_restored_) {
     self->ResetEventDispatchState();
     LOG_INFO("[MediaPlayer] Event dispatch state reset for restored player.");
     self->OnRestoreCompleted();
   }
 
-  // Call SendInitialized() - it uses GetInitialDuration() which is safe
   if (!self->is_initialized_) {
     self->SendInitialized();
   }

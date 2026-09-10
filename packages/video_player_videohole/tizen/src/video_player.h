@@ -5,6 +5,7 @@
 #ifndef FLUTTER_PLUGIN_VIDEO_PLAYER_H_
 #define FLUTTER_PLUGIN_VIDEO_PLAYER_H_
 
+#include <dart_api_dl.h>
 #include <flutter/encodable_value.h>
 #include <flutter_tizen.h>
 #include <glib.h>
@@ -17,19 +18,14 @@
 #include <string>
 #include <utility>
 
-// Dart API for sending messages from native code to Dart isolate
-#include <dart_api_dl.h>
-
 #include "ecore_wl2_window_proxy.h"
 #include "ffi_messages.h"
 
 namespace video_player_videohole_tizen {
 
-// Global Dart port for all player events.
 void RegisterDartPort(int64_t dart_port);
 void UnregisterDartPort();
 
-// Post event to Dart using global port.
 void PostEventToDart(int64_t player_id, const std::string &event_json);
 
 class VideoPlayer {
@@ -45,8 +41,7 @@ class VideoPlayer {
   virtual int64_t Create(const std::string &uri,
                          const CreateMessage &create_message,
                          bool reuse_existing_id = false) = 0;
-  virtual int
-  Prepare() = 0;  // Two-phase: start player_prepare_async separately
+  virtual int Prepare() = 0;
   virtual void Dispose() = 0;
 
   virtual void SetDisplayRoi(int32_t x, int32_t y, int32_t width,
@@ -66,8 +61,6 @@ class VideoPlayer {
   virtual flutter::EncodableList GetTrackInfo(std::string track_type) = 0;
   virtual bool SetTrackSelection(int32_t track_id, std::string track_type) = 0;
   virtual bool Suspend() = 0;
-  // Restore player state (returns true on success, false on failure)
-  // Player ID remains unchanged after restore
   virtual bool Restore(const CreateMessage *restore_message,
                        int64_t resume_time) = 0;
   virtual bool SetDisplayRotate(int64_t rotation) = 0;
@@ -86,17 +79,11 @@ class VideoPlayer {
   void SendRestored();
   void SendError(const std::string &error_code,
                  const std::string &error_message);
-
-  // Reset event dispatch state for restored player
   void ResetEventDispatchState();
-
-  // Check if player is disposed (for use in callbacks)
   bool IsDisposed() const;
-
-  // Mark player as disposed (called from Dispose() and destructor)
   void MarkDisposed();
 
-  int64_t player_id_;  // Store player ID for event routing
+  int64_t player_id_;
   std::mutex queue_mutex_;
   std::unique_ptr<EcoreWl2WindowProxy> ecore_wl2_window_proxy_ = nullptr;
   flutter::BinaryMessenger *binary_messenger_;
@@ -111,7 +98,6 @@ class VideoPlayer {
     }
   };
 
-  // Event dispatch state structure for lifecycle management
   struct EventDispatchState {
     std::mutex mutex;
     VideoPlayer *player = nullptr;

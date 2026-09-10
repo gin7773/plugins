@@ -2,8 +2,6 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// FFI API implementation for video_player_tizen
-
 #include "ffi_messages.h"
 
 #include <app_common.h>
@@ -25,7 +23,7 @@
 #include <string>
 #include <variant>
 
-#include "../third_party/json.hpp"
+#include "../third_party/nlohmann_json/json.hpp"
 #include "log.h"
 #include "media_player.h"
 #include "video_player.h"
@@ -35,15 +33,12 @@ using nlohmann::json;
 
 namespace video_player_videohole_tizen {
 
-// ===== Global State for FFI Layer =====
 static std::map<int64_t, std::shared_ptr<VideoPlayer>> g_players;
 static std::shared_mutex g_players_mutex;
 static FlutterDesktopPluginRegistrarRef g_registrar_ref = nullptr;
 static flutter::PluginRegistrar* g_plugin_registrar = nullptr;
 static VideoPlayerOptions g_options;
 static bool g_dart_api_dl_initialized = false;
-
-// ===== Helper Functions (static, file-local) =====
 
 static std::shared_ptr<VideoPlayer> GetPlayer(int64_t player_id) {
   std::shared_lock<std::shared_mutex> lock(g_players_mutex);
@@ -133,8 +128,6 @@ CreateMessage ParseCreateMessage(const std::string& json_str) {
   return msg;
 }
 
-// ===== Public Internal API (only exported function) =====
-
 void ffi_set_plugin_registrar(FlutterDesktopPluginRegistrarRef registrar_ref,
                               flutter::PluginRegistrar* registrar) {
   g_registrar_ref = registrar_ref;
@@ -142,8 +135,6 @@ void ffi_set_plugin_registrar(FlutterDesktopPluginRegistrarRef registrar_ref,
 }
 
 }  // namespace video_player_videohole_tizen
-
-// ===== FFI Implementation (C interface) =====
 
 using video_player_videohole_tizen::CreateMessage;
 using video_player_videohole_tizen::VideoPlayer;
@@ -157,7 +148,6 @@ int ffi_initialize() {
   return 0;
 }
 
-// Dispose all players - called when plugin is destroyed
 void ffi_dispose_all_players() {
   using namespace video_player_videohole_tizen;
 

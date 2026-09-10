@@ -371,7 +371,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   RestoreDataSourceCallback? _onRestoreDataSource;
   RestoreTimeCallback? _onRestoreTime;
 
-  // Store event and error listeners for re-subscription during restore
   void Function(VideoEvent)? _eventListener;
   void Function(Object)? _errorListener;
 
@@ -439,8 +438,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
     _creatingCompleter!.complete(null);
     final Completer<void> initializingCompleter = Completer<void>();
 
-    // Set up event listener BEFORE calling prepare() to ensure we don't miss
-    // the initialized event (two-phase initialization)
     _eventListener = (VideoEvent event) {
       if (_isDisposed) {
         return;
@@ -472,8 +469,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
           }
           _applyLooping();
           _applyVolume();
-          // Note: Native side already handles play/pause restoration in OnRestoreCompleted()
-          // We only need to apply current state, not trigger play() again
           if (VideoEventType.restored == event.eventType &&
               _onRestoreDataSource != null) {
             play();
@@ -554,10 +549,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         .videoEventsFor(_playerId)
         .listen(_eventListener, onError: _errorListener);
 
-    // Two-phase initialization: Call prepare() AFTER setting up event listeners
-    // This ensures the initialized event is not missed
-    // For Tizen, prepare() starts player_prepare_async
-    // For other platforms, prepare() is a no-op (prepare already done in create())
     await _videoPlayerPlatform.prepare(_playerId);
 
     return initializingCompleter.future;
@@ -919,7 +910,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
   }
 
   /// Restores the player state when the application is resumed.
-  /// Player ID remains unchanged after restore.
   Future<void> _restore() async {
     if (_isDisposedOrNotInitialized) {
       return;
@@ -929,13 +919,11 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
         (_onRestoreDataSource != null) ? _onRestoreDataSource!() : null;
     final int resumeTime = (_onRestoreTime != null) ? _onRestoreTime!() : -1;
 
-    // P0-3 fix: restore returns void, player ID remains unchanged
     await _videoPlayerPlatform.restore(
       _playerId,
       dataSource: dataSource,
       resumeTime: resumeTime,
     );
-    // Player ID remains unchanged, no need to update event subscription
   }
 
   /// Set the rotate angle of display

@@ -4,23 +4,20 @@
 
 #include "video_player.h"
 
+#include <dart_api_dl.h>
+
 #include <sstream>
 
-#include "../third_party/json.hpp"
+#include "../third_party/nlohmann_json/json.hpp"
 #include "log.h"
-
-// For Dart_Port and Dart_PostCObject_DL
-#include <dart_api_dl.h>
 
 using nlohmann::json;
 
 namespace video_player_videohole_tizen {
 
-// Global Dart port for all player events
 static int64_t g_dart_port = -1;
 static std::mutex g_dart_port_mutex;
 
-// Register global Dart port for all player events
 void RegisterDartPort(int64_t dart_port) {
   std::lock_guard<std::mutex> lock(g_dart_port_mutex);
   g_dart_port = dart_port;
@@ -28,17 +25,12 @@ void RegisterDartPort(int64_t dart_port) {
            static_cast<long long>(dart_port));
 }
 
-// Unregister global Dart port
 void UnregisterDartPort() {
   std::lock_guard<std::mutex> lock(g_dart_port_mutex);
   g_dart_port = -1;
   LOG_INFO("[VideoPlayer] Unregistered global port");
 }
 
-// Post event to Dart using global port
-// Note: Copy port under lock, then release lock BEFORE calling
-// Dart_PostCObject_DL to avoid potential deadlock if Dart_PostCObject_DL blocks
-// or callbacks
 void PostEventToDart(int64_t player_id, const std::string& event_json) {
   int64_t port;
   {
@@ -60,12 +52,10 @@ void PostEventToDart(int64_t player_id, const std::string& event_json) {
   event_json_obj.type = Dart_CObject_kString;
   event_json_obj.value.as_string = json_copy;
 
-  // Array elements (must be pointers)
   Dart_CObject* array_elements[2];
   array_elements[0] = &player_id_obj;
   array_elements[1] = &event_json_obj;
 
-  // The message array
   Dart_CObject message;
   message.type = Dart_CObject_kArray;
   message.value.as_array.length = 2;
@@ -82,13 +72,9 @@ void PostEventToDart(int64_t player_id, const std::string& event_json) {
   }
 }
 
-// Fix P1 #4: Use nlohmann::json for proper string escaping
+static json EncodableValueToJson(const flutter::EncodableValue& value);
 
-// Forward declaration
-static json EncodableValueToJsonJson(const flutter::EncodableValue& value);
-
-// Convert EncodableMap to nlohmann::json
-static json EncodableMapToJsonJson(const flutter::EncodableMap& map) {
+static json EncodableMapToJson(const flutter::EncodableMap& map) {
   json j = json::object();
   for (const auto& [key, val] : map) {
     std::string key_str;
@@ -99,22 +85,20 @@ static json EncodableMapToJsonJson(const flutter::EncodableMap& map) {
     } else if (std::holds_alternative<int64_t>(key)) {
       key_str = std::to_string(std::get<int64_t>(key));
     }
-    j[key_str] = EncodableValueToJsonJson(val);
+    j[key_str] = EncodableValueToJson(val);
   }
   return j;
 }
 
-// Convert EncodableList to nlohmann::json
-static json EncodableListToJsonJson(const flutter::EncodableList& list) {
+static json EncodableListToJson(const flutter::EncodableList& list) {
   json j = json::array();
   for (const auto& item : list) {
-    j.push_back(EncodableValueToJsonJson(item));
+    j.push_back(EncodableValueToJson(item));
   }
   return j;
 }
 
-// Convert EncodableValue to nlohmann::json (helper for nested types)
-static json EncodableValueToJsonJson(const flutter::EncodableValue& value) {
+static json EncodableValueToJson(const flutter::EncodableValue& value) {
   try {
     if (std::holds_alternative<bool>(value)) {
       return json(std::get<bool>(value));
@@ -131,75 +115,31 @@ static json EncodableValueToJsonJson(const flutter::EncodableValue& value) {
     if (std::holds_alternative<std::string>(value)) {
       return json(std::get<std::string>(value));
     }
+    if (std::holds_alternative<std::vector<uint8_t>>(value) ||
+        std::holds_alternative<std::vector<int32_t>>(value) ||
+        std::holds_alternative<std::vector<int64_t>>(value) ||
+        std::holds_alternative<std::vector<double>>(value) ||
+        std::holds_alternative<std::vector<float>>(value)) {
+      return json::array();
+    }
     if (std::holds_alternative<flutter::EncodableList>(value)) {
-      return EncodableListToJsonJson(std::get<flutter::EncodableList>(value));
+      return EncodableListToJson(std::get<flutter::EncodableList>(value));
     }
     if (std::holds_alternative<flutter::EncodableMap>(value)) {
-      return EncodableMapToJsonJson(std::get<flutter::EncodableMap>(value));
+      return EncodableMapToJson(std::get<flutter::EncodableMap>(value));
     }
-    // Default for null/monostate or any unknown type
     return json(nullptr);
   } catch (const std::bad_variant_access& e) {
     return json(nullptr);
-  }
-}
-
-// Convert EncodableValue to JSON string with proper escaping
-static std::string EncodableValueToJson(const flutter::EncodableValue& value) {
-  try {
-    if (std::holds_alternative<bool>(value)) {
-      return json(std::get<bool>(value)).dump();
-    }
-    if (std::holds_alternative<int32_t>(value)) {
-      return json(std::get<int32_t>(value)).dump();
-    }
-    if (std::holds_alternative<int64_t>(value)) {
-      return json(std::get<int64_t>(value)).dump();
-    }
-    if (std::holds_alternative<double>(value)) {
-      return json(std::get<double>(value)).dump();
-    }
-    if (std::holds_alternative<std::string>(value)) {
-      // nlohmann::json handles string escaping automatically
-      return json(std::get<std::string>(value)).dump();
-    }
-    if (std::holds_alternative<std::vector<uint8_t>>(value)) {
-      return "[]";
-    }
-    if (std::holds_alternative<std::vector<int32_t>>(value)) {
-      return "[]";
-    }
-    if (std::holds_alternative<std::vector<int64_t>>(value)) {
-      return "[]";
-    }
-    if (std::holds_alternative<std::vector<double>>(value)) {
-      return "[]";
-    }
-    if (std::holds_alternative<flutter::EncodableList>(value)) {
-      return EncodableListToJsonJson(std::get<flutter::EncodableList>(value))
-          .dump();
-    }
-    if (std::holds_alternative<flutter::EncodableMap>(value)) {
-      return EncodableMapToJsonJson(std::get<flutter::EncodableMap>(value))
-          .dump();
-    }
-    if (std::holds_alternative<std::vector<float>>(value)) {
-      return "[]";
-    }
-    // Default for null/monostate or any unknown type
-    return "null";
-  } catch (const std::bad_variant_access& e) {
-    return "null";
   }
 }
 
 VideoPlayer::VideoPlayer(flutter::BinaryMessenger* messenger,
                          FlutterDesktopViewRef flutter_view)
-    : player_id_(-1),  // Will be set in SetUpEventChannel.
+    : player_id_(-1),
       ecore_wl2_window_proxy_(std::make_unique<EcoreWl2WindowProxy>()),
       binary_messenger_(messenger),
       flutter_view_(flutter_view) {
-  // Initialize GMainContext and event dispatch state
   main_context_ = std::unique_ptr<GMainContext, GMainContextDeleter>(
       g_main_context_ref_thread_default());
   event_dispatch_state_ = std::make_shared<VideoPlayer::EventDispatchState>();
@@ -246,11 +186,10 @@ bool VideoPlayer::IsDisposed() const {
     std::lock_guard<std::mutex> lock(event_dispatch_state_->mutex);
     return event_dispatch_state_->disposed;
   }
-  return true;  // If no event_dispatch_state_, consider as disposed
+  return true;
 }
 
 void VideoPlayer::ExecuteSinkEvents() {
-  // Double-check: make sure we're not disposed
   if (event_dispatch_state_) {
     std::lock_guard<std::mutex> state_lock(event_dispatch_state_->mutex);
     if (event_dispatch_state_->disposed) {
@@ -259,7 +198,6 @@ void VideoPlayer::ExecuteSinkEvents() {
     }
   }
 
-  // Step 1: Collect regular events while holding the lock
   std::vector<flutter::EncodableValue> regular_events;
   {
     std::lock_guard<std::mutex> lock(queue_mutex_);
@@ -269,12 +207,10 @@ void VideoPlayer::ExecuteSinkEvents() {
     }
   }
 
-  // Step 2: Send regular events (no lock needed)
   int event_count = 0;
   for (const auto& event : regular_events) {
-    std::string event_json = EncodableValueToJson(event);
+    std::string event_json = EncodableValueToJson(event).dump();
 
-    // Extract event type for logging
     std::string event_type = "unknown";
     if (event_json.find("\"event\":\"initialized\"") != std::string::npos) {
       event_type = "initialized";
@@ -302,7 +238,6 @@ void VideoPlayer::ExecuteSinkEvents() {
     event_count++;
   }
 
-  // Step 3: Collect error events while holding the lock
   std::vector<std::pair<std::string, std::string>> error_events;
   {
     std::lock_guard<std::mutex> lock(queue_mutex_);
@@ -312,8 +247,6 @@ void VideoPlayer::ExecuteSinkEvents() {
     }
   }
 
-  // Step 4: Send error events directly using PostEventToDart (more efficient
-  // than PushEvent)
   for (const auto& error : error_events) {
     flutter::EncodableMap error_map = {
         {flutter::EncodableValue("event"), flutter::EncodableValue("error")},
@@ -322,7 +255,7 @@ void VideoPlayer::ExecuteSinkEvents() {
          flutter::EncodableValue(error.second)},
     };
     std::string error_json =
-        EncodableValueToJson(flutter::EncodableValue(error_map));
+        EncodableValueToJson(flutter::EncodableValue(error_map)).dump();
     PostEventToDart(player_id_, error_json);
   }
 }
@@ -330,7 +263,6 @@ void VideoPlayer::ExecuteSinkEvents() {
 void VideoPlayer::ScheduleSendPendingEvents() {
   std::lock_guard<std::mutex> lock(event_dispatch_state_->mutex);
 
-  // Check conditions and deduplicate
   if (!main_context_ || !event_dispatch_state_ ||
       event_dispatch_state_->disposed ||
       event_dispatch_state_->pending_source_id != 0) {
@@ -341,7 +273,6 @@ void VideoPlayer::ScheduleSendPendingEvents() {
 
   GSource* source = g_idle_source_new();
 
-  // CRITICAL: Set callback BEFORE attaching to main context!
   g_source_set_callback(
       source,
       [](gpointer data) -> gboolean {
@@ -382,7 +313,6 @@ void VideoPlayer::SendInitialized() {
     int32_t width = 0, height = 0;
     GetVideoSize(&width, &height);
     is_initialized_ = true;
-    // Use GetDuration() to get the duration
     auto duration = GetDuration();
     flutter::EncodableList duration_range{
         flutter::EncodableValue(duration.first),
