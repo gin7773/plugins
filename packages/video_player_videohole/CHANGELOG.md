@@ -1,5 +1,6 @@
 ## 0.6.0
 
+* Resolve `strict_top_level_inference` lint.
 * Migrate from Platform Channels to Dart FFI.
 * Replace EventChannel with FFI port for event callbacks.
 * Add JSON serialization for complex parameters.
