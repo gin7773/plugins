@@ -2,23 +2,25 @@
 // Use of this source code is governed by a BSD-style license that can be
 // found in the LICENSE file.
 
-// FFI API for video_player_tizen - manually maintained
-// This file contains FFI bindings and message types for synchronous native calls
-
+import 'dart:convert' show jsonDecode, jsonEncode, utf8;
 import 'dart:ffi' as ffi;
 import 'dart:isolate' show RawReceivePort, ReceivePort;
-import 'package:ffi/ffi.dart' show calloc;
-import 'dart:typed_data' show Float64List, Int32List, Int64List, Uint8List;
-import 'dart:convert' show utf8, jsonEncode, jsonDecode;
 
+import 'package:ffi/ffi.dart' show calloc;
 import 'package:flutter/services.dart';
 
+/// Represents track information returned from the native player.
 class TrackMessage {
+  /// Creates a [TrackMessage] with the given [playerId] and [tracks].
   TrackMessage({required this.playerId, required this.tracks});
 
+  /// The unique identifier of the player.
   int playerId;
+
+  /// The list of available tracks for the player.
   List<Map<Object?, Object?>?> tracks;
 
+  /// Serializes this message to a JSON string.
   String toJson() {
     final Map<String, dynamic> jsonMap = <String, dynamic>{
       'playerId': playerId,
@@ -27,8 +29,10 @@ class TrackMessage {
     return jsonEncode(jsonMap);
   }
 
+  /// Deserializes a JSON string into a [TrackMessage].
   static TrackMessage fromJson(String jsonString) {
-    final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
+    final Map<String, dynamic> jsonMap =
+        jsonDecode(jsonString) as Map<String, dynamic>;
     return TrackMessage(
       playerId: jsonMap['playerId'] as int,
       tracks: (jsonMap['tracks'] as List<dynamic>)
@@ -38,7 +42,9 @@ class TrackMessage {
   }
 }
 
+/// Represents the parameters for creating a new video player instance.
 class CreateMessage {
+  /// Creates a [CreateMessage] with optional parameters.
   CreateMessage({
     this.asset,
     this.uri,
@@ -49,33 +55,58 @@ class CreateMessage {
     this.playerOptions,
   });
 
+  /// The asset path for local video resources.
   String? asset;
+
+  /// The URI of the video to play.
   String? uri;
+
+  /// The package name for asset resolution.
   String? packageName;
+
+  /// The format hint for the video.
   String? formatHint;
+
+  /// HTTP headers for the video request.
   Map<Object?, Object?>? httpHeaders;
+
+  /// DRM configuration for protected content.
   Map<Object?, Object?>? drmConfigs;
+
+  /// Additional player options.
   Map<Object?, Object?>? playerOptions;
 
+  /// Serializes this message to a JSON string.
   String toJson() {
     final Map<String, dynamic> jsonMap = <String, dynamic>{};
-    if (asset != null && asset!.isNotEmpty) jsonMap['asset'] = asset;
-    if (uri != null && uri!.isNotEmpty) jsonMap['uri'] = uri;
-    if (packageName != null && packageName!.isNotEmpty)
+    if (asset != null && asset!.isNotEmpty) {
+      jsonMap['asset'] = asset;
+    }
+    if (uri != null && uri!.isNotEmpty) {
+      jsonMap['uri'] = uri;
+    }
+    if (packageName != null && packageName!.isNotEmpty) {
       jsonMap['packageName'] = packageName;
-    if (formatHint != null && formatHint!.isNotEmpty)
+    }
+    if (formatHint != null && formatHint!.isNotEmpty) {
       jsonMap['formatHint'] = formatHint;
-    if (httpHeaders != null && httpHeaders!.isNotEmpty)
+    }
+    if (httpHeaders != null && httpHeaders!.isNotEmpty) {
       jsonMap['httpHeaders'] = httpHeaders;
-    if (drmConfigs != null && drmConfigs!.isNotEmpty)
+    }
+    if (drmConfigs != null && drmConfigs!.isNotEmpty) {
       jsonMap['drmConfigs'] = drmConfigs;
-    if (playerOptions != null && playerOptions!.isNotEmpty)
+    }
+    if (playerOptions != null && playerOptions!.isNotEmpty) {
       jsonMap['playerOptions'] = playerOptions;
+    }
     return jsonEncode(jsonMap);
   }
 
+  /// Deserializes a JSON string into a [CreateMessage].
   static CreateMessage fromJson(String jsonString) {
-    final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
+    final Map<String, dynamic> jsonMap =
+        jsonDecode(jsonString) as Map<String, dynamic>;
     return CreateMessage(
       asset: jsonMap['asset'] as String?,
       uri: jsonMap['uri'] as String?,
@@ -89,12 +120,18 @@ class CreateMessage {
   }
 }
 
+/// Represents the duration information of a video player.
 class DurationMessage {
+  /// Creates a [DurationMessage] with the given [playerId] and optional [durationRange].
   DurationMessage({required this.playerId, this.durationRange});
 
+  /// The unique identifier of the player.
   int playerId;
+
+  /// The duration range [min, max] in milliseconds.
   List<int?>? durationRange;
 
+  /// Serializes this message to a JSON string.
   String toJson() {
     final Map<String, dynamic> jsonMap = <String, dynamic>{
       'playerId': playerId,
@@ -103,8 +140,10 @@ class DurationMessage {
     return jsonEncode(jsonMap);
   }
 
+  /// Deserializes a JSON string into a [DurationMessage].
   static DurationMessage fromJson(String jsonString) {
-    final Map<String, dynamic> jsonMap = jsonDecode(jsonString);
+    final Map<String, dynamic> jsonMap =
+        jsonDecode(jsonString) as Map<String, dynamic>;
     return DurationMessage(
       playerId: jsonMap['playerId'] as int,
       durationRange: (jsonMap['durationRange'] as List<dynamic>?)
@@ -187,9 +226,12 @@ typedef _FFIFreeStringNative = ffi.Void Function(ffi.Pointer<ffi.Char>);
 typedef _FFIFreeStringDart = void Function(ffi.Pointer<ffi.Char>);
 
 ffi.Pointer<ffi.Char> _toPointer(String? str) {
-  if (str == null) return ffi.nullptr;
-  final units = utf8.encode(str);
-  final result = calloc.allocate<ffi.Uint8>(units.length + 1);
+  if (str == null) {
+    return ffi.nullptr;
+  }
+  final Uint8List units = utf8.encode(str);
+  final ffi.Pointer<ffi.Uint8> result =
+      calloc.allocate<ffi.Uint8>(units.length + 1);
   final Uint8List nativeString = result.asTypedList(units.length + 1);
   nativeString.setAll(0, units);
   nativeString[units.length] = 0;
@@ -202,7 +244,9 @@ void _freePointer(ffi.Pointer<ffi.Char> ptr) {
   }
 }
 
+/// Manages FFI bindings to the native video player library.
 class VideoPlayerFFIBindings {
+  VideoPlayerFFIBindings._();
   static VideoPlayerFFIBindings? _instance;
   ffi.DynamicLibrary? _lib;
 
@@ -233,15 +277,17 @@ class VideoPlayerFFIBindings {
   late void Function(int) _ffiRegisterDartPort;
   late void Function() _ffiUnregisterDartPort;
 
+  /// Returns the singleton instance of [VideoPlayerFFIBindings].
   static VideoPlayerFFIBindings get instance {
     _instance ??= VideoPlayerFFIBindings._();
     return _instance!;
   }
 
-  VideoPlayerFFIBindings._();
-
+  /// Loads the native library and resolves all FFI function symbols.
   void load() {
-    if (_lib != null) return;
+    if (_lib != null) {
+      return;
+    }
 
     try {
       _lib = ffi.DynamicLibrary.process();
@@ -358,25 +404,29 @@ class VideoPlayerFFIBindings {
     }
   }
 
+  /// Whether the native library has been loaded.
   bool get isLoaded => _lib != null;
 }
 
+/// Provides the Dart-facing API for the native video player via FFI.
 class VideoPlayerVideoholeFFIApi {
+  /// Initializes the native video player library.
   int initialize() {
-    final bindings = VideoPlayerFFIBindings.instance;
+    final VideoPlayerFFIBindings bindings = VideoPlayerFFIBindings.instance;
     if (!bindings.isLoaded) {
       bindings.load();
     }
     return bindings._ffiInitialize();
   }
 
+  /// Creates a new native video player instance from [message].
   int create(CreateMessage message) {
-    final bindings = VideoPlayerFFIBindings.instance;
+    final VideoPlayerFFIBindings bindings = VideoPlayerFFIBindings.instance;
     if (!bindings.isLoaded) {
       bindings.load();
     }
     final String jsonString = message.toJson();
-    final jsonPtr = _toPointer(jsonString);
+    final ffi.Pointer<ffi.Char> jsonPtr = _toPointer(jsonString);
     try {
       return bindings._ffiCreate(jsonPtr);
     } finally {
@@ -384,21 +434,23 @@ class VideoPlayerVideoholeFFIApi {
     }
   }
 
+  /// Prepares the player for playback asynchronously.
   int prepare(int playerId) {
-    final bindings = VideoPlayerFFIBindings.instance;
+    final VideoPlayerFFIBindings bindings = VideoPlayerFFIBindings.instance;
     if (!bindings.isLoaded) {
       bindings.load();
     }
     return bindings._ffiPrepare(playerId);
   }
 
+  /// Restores a previously suspended player with optional [message] and [resumeTime].
   int restore(int playerId, CreateMessage? message, int resumeTime) {
-    final bindings = VideoPlayerFFIBindings.instance;
+    final VideoPlayerFFIBindings bindings = VideoPlayerFFIBindings.instance;
     if (!bindings.isLoaded) {
       bindings.load();
     }
     final String? jsonString = message?.toJson();
-    final createMessagePtr = _toPointer(jsonString);
+    final ffi.Pointer<ffi.Char> createMessagePtr = _toPointer(jsonString);
     try {
       return bindings._ffiRestore(playerId, createMessagePtr, resumeTime);
     } finally {
@@ -406,52 +458,58 @@ class VideoPlayerVideoholeFFIApi {
     }
   }
 
+  /// Disposes the native player identified by [playerId].
   int dispose(int playerId) {
-    final bindings = VideoPlayerFFIBindings.instance;
+    final VideoPlayerFFIBindings bindings = VideoPlayerFFIBindings.instance;
     if (!bindings.isLoaded) {
       bindings.load();
     }
     return bindings._ffiDispose(playerId);
   }
 
+  /// Starts playback of the player identified by [playerId].
   int play(int playerId) {
-    final bindings = VideoPlayerFFIBindings.instance;
+    final VideoPlayerFFIBindings bindings = VideoPlayerFFIBindings.instance;
     if (!bindings.isLoaded) {
       bindings.load();
     }
     return bindings._ffiPlay(playerId);
   }
 
+  /// Pauses playback of the player identified by [playerId].
   int pause(int playerId) {
-    final bindings = VideoPlayerFFIBindings.instance;
+    final VideoPlayerFFIBindings bindings = VideoPlayerFFIBindings.instance;
     if (!bindings.isLoaded) {
       bindings.load();
     }
     return bindings._ffiPause(playerId);
   }
 
+  /// Seeks to [positionMs] in the player identified by [playerId].
   int seekTo(int playerId, int positionMs) {
-    final bindings = VideoPlayerFFIBindings.instance;
+    final VideoPlayerFFIBindings bindings = VideoPlayerFFIBindings.instance;
     if (!bindings.isLoaded) {
       bindings.load();
     }
     return bindings._ffiSeekTo(playerId, positionMs);
   }
 
+  /// Returns the current playback position in milliseconds.
   int getPosition(int playerId) {
-    final bindings = VideoPlayerFFIBindings.instance;
+    final VideoPlayerFFIBindings bindings = VideoPlayerFFIBindings.instance;
     if (!bindings.isLoaded) {
       bindings.load();
     }
     return bindings._ffiGetPosition(playerId);
   }
 
+  /// Returns the duration information of the player identified by [playerId].
   DurationMessage duration(int playerId) {
-    final bindings = VideoPlayerFFIBindings.instance;
+    final VideoPlayerFFIBindings bindings = VideoPlayerFFIBindings.instance;
     if (!bindings.isLoaded) {
       bindings.load();
     }
-    final ptr = bindings._ffiGetDuration(playerId);
+    final ffi.Pointer<ffi.Char> ptr = bindings._ffiGetDuration(playerId);
     if (ptr == ffi.nullptr) {
       throw PlatformException(
         code: 'FFI_GET_DURATION_FAILED',
@@ -459,12 +517,12 @@ class VideoPlayerVideoholeFFIApi {
       );
     }
     try {
-      final bytes = ptr.cast<ffi.Uint8>();
+      final ffi.Pointer<ffi.Uint8> bytes = ptr.cast<ffi.Uint8>();
       int length = 0;
       while (bytes[length] != 0) {
         length++;
       }
-      final jsonString = utf8.decode(bytes.asTypedList(length));
+      final String jsonString = utf8.decode(bytes.asTypedList(length));
       if (jsonString == '-1') {
         throw PlatformException(
           code: 'FFI_GET_DURATION_FAILED',
@@ -477,76 +535,85 @@ class VideoPlayerVideoholeFFIApi {
     }
   }
 
+  /// Sets the playback volume for the player identified by [playerId].
   int setVolume(int playerId, double volume) {
-    final bindings = VideoPlayerFFIBindings.instance;
+    final VideoPlayerFFIBindings bindings = VideoPlayerFFIBindings.instance;
     if (!bindings.isLoaded) {
       bindings.load();
     }
     return bindings._ffiSetVolume(playerId, volume);
   }
 
+  /// Sets the playback speed for the player identified by [playerId].
   int setPlaybackSpeed(int playerId, double speed) {
-    final bindings = VideoPlayerFFIBindings.instance;
+    final VideoPlayerFFIBindings bindings = VideoPlayerFFIBindings.instance;
     if (!bindings.isLoaded) {
       bindings.load();
     }
     return bindings._ffiSetPlaybackSpeed(playerId, speed);
   }
 
+  /// Enables or disables looping for the player identified by [playerId].
   int setLooping(int playerId, bool isLooping) {
-    final bindings = VideoPlayerFFIBindings.instance;
+    final VideoPlayerFFIBindings bindings = VideoPlayerFFIBindings.instance;
     if (!bindings.isLoaded) {
       bindings.load();
     }
     return bindings._ffiSetLooping(playerId, isLooping);
   }
 
+  /// Sets the display geometry (position and size) for the player.
   int setDisplayGeometry(int playerId, int x, int y, int width, int height) {
-    final bindings = VideoPlayerFFIBindings.instance;
+    final VideoPlayerFFIBindings bindings = VideoPlayerFFIBindings.instance;
     if (!bindings.isLoaded) {
       bindings.load();
     }
     return bindings._ffiSetDisplayGeometry(playerId, x, y, width, height);
   }
 
+  /// Sets the display rotation for the player identified by [playerId].
   int setDisplayRotate(int playerId, int rotation) {
-    final bindings = VideoPlayerFFIBindings.instance;
+    final VideoPlayerFFIBindings bindings = VideoPlayerFFIBindings.instance;
     if (!bindings.isLoaded) {
       bindings.load();
     }
     return bindings._ffiSetDisplayRotate(playerId, rotation);
   }
 
+  /// Suspends the player identified by [playerId].
   int suspend(int playerId) {
-    final bindings = VideoPlayerFFIBindings.instance;
+    final VideoPlayerFFIBindings bindings = VideoPlayerFFIBindings.instance;
     if (!bindings.isLoaded) {
       bindings.load();
     }
     return bindings._ffiSuspend(playerId);
   }
 
+  /// Activates the player identified by [playerId].
   int setActivate(int playerId) {
-    final bindings = VideoPlayerFFIBindings.instance;
+    final VideoPlayerFFIBindings bindings = VideoPlayerFFIBindings.instance;
     if (!bindings.isLoaded) {
       bindings.load();
     }
     return bindings._ffiSetActivate(playerId);
   }
 
+  /// Deactivates the player identified by [playerId].
   int setDeactivate(int playerId) {
-    final bindings = VideoPlayerFFIBindings.instance;
+    final VideoPlayerFFIBindings bindings = VideoPlayerFFIBindings.instance;
     if (!bindings.isLoaded) {
       bindings.load();
     }
     return bindings._ffiSetDeactivate(playerId);
   }
 
+  /// Retrieves track information for the player identified by [playerId].
   TrackMessage getTrackInfo(int playerId, String trackType) {
-    final bindings = VideoPlayerFFIBindings.instance;
+    final VideoPlayerFFIBindings bindings = VideoPlayerFFIBindings.instance;
     if (!bindings.isLoaded) {
       bindings.load();
     }
-    final trackTypePtr = _toPointer(trackType);
+    final ffi.Pointer<ffi.Char> trackTypePtr = _toPointer(trackType);
     ffi.Pointer<ffi.Char>? ptr;
     try {
       ptr = bindings._ffiGetTrackInfo(playerId, trackTypePtr);
@@ -556,12 +623,12 @@ class VideoPlayerVideoholeFFIApi {
           message: 'FFI getTrackInfo failed - returned null pointer',
         );
       }
-      final bytes = ptr.cast<ffi.Uint8>();
+      final ffi.Pointer<ffi.Uint8> bytes = ptr.cast<ffi.Uint8>();
       int length = 0;
       while (bytes[length] != 0) {
         length++;
       }
-      final jsonString = utf8.decode(bytes.asTypedList(length));
+      final String jsonString = utf8.decode(bytes.asTypedList(length));
       if (jsonString == '-1') {
         throw PlatformException(
           code: 'FFI_GET_TRACK_INFO_FAILED',
@@ -577,12 +644,13 @@ class VideoPlayerVideoholeFFIApi {
     }
   }
 
+  /// Selects a track by [trackId] and [trackType] for the player.
   int setTrackSelection(int playerId, int trackId, String trackType) {
-    final bindings = VideoPlayerFFIBindings.instance;
+    final VideoPlayerFFIBindings bindings = VideoPlayerFFIBindings.instance;
     if (!bindings.isLoaded) {
       bindings.load();
     }
-    final trackTypePtr = _toPointer(trackType);
+    final ffi.Pointer<ffi.Char> trackTypePtr = _toPointer(trackType);
     try {
       return bindings._ffiSetTrackSelection(playerId, trackId, trackTypePtr);
     } finally {
@@ -590,8 +658,9 @@ class VideoPlayerVideoholeFFIApi {
     }
   }
 
+  /// Sets whether audio should mix with other audio sources.
   int setMixWithOthers(bool mixWithOthers) {
-    final bindings = VideoPlayerFFIBindings.instance;
+    final VideoPlayerFFIBindings bindings = VideoPlayerFFIBindings.instance;
     if (!bindings.isLoaded) {
       bindings.load();
     }
@@ -608,18 +677,23 @@ typedef _FFIRegisterEventPortDart = void Function(int);
 typedef _FFIUnregisterEventPortNative = ffi.Void Function();
 typedef _FFIUnregisterEventPortDart = void Function();
 
-ffi.Pointer<ffi.NativeFunction<_FFIInitializeApiDlNative>>?
+late ffi.Pointer<ffi.NativeFunction<_FFIInitializeApiDlNative>>?
     _ffiInitializeApiDlPtr;
+
+/// Whether the Dart API DL has been initialized.
 bool _apiDlInitialized = false;
 
+/// Initializes the Dart API DL for native-to-Dart communication.
 void ffiInitializeApiDL() {
-  if (_apiDlInitialized) return;
+  if (_apiDlInitialized) {
+    return;
+  }
 
-  final bindings = VideoPlayerFFIBindings.instance;
+  final VideoPlayerFFIBindings bindings = VideoPlayerFFIBindings.instance;
   if (!bindings.isLoaded) {
     bindings.load();
   }
-  final lib = bindings._lib;
+  final ffi.DynamicLibrary? lib = bindings._lib;
   if (lib == null) {
     throw PlatformException(
       code: 'FFI_LIBRARY_NOT_LOADED',
@@ -650,11 +724,15 @@ void ffiInitializeApiDL() {
   _apiDlInitialized = true;
 }
 
+/// Extension on [RawReceivePort] to expose the native port ID.
 extension RawReceivePortNativePort on RawReceivePort {
+  /// Returns the native port ID of this [RawReceivePort].
   int get nativePort => _rawReceivePortNativePort(this);
 }
 
+/// Extension on [ReceivePort] to expose the native port ID.
 extension ReceivePortNativePort on ReceivePort {
+  /// Returns the native port ID of this [ReceivePort].
   int get nativePort => _receivePortNativePort(this);
 }
 
@@ -668,16 +746,18 @@ int _receivePortNativePort(ReceivePort port) {
   return port.sendPort.nativePort;
 }
 
+/// Registers the Dart event [port] with the native player for receiving events.
 void ffiRegisterEventPort(int port) {
-  final bindings = VideoPlayerFFIBindings.instance;
+  final VideoPlayerFFIBindings bindings = VideoPlayerFFIBindings.instance;
   if (!bindings.isLoaded) {
     bindings.load();
   }
   bindings._ffiRegisterDartPort(port);
 }
 
+/// Unregisters the Dart event port from the native player.
 void ffiUnregisterEventPort() {
-  final bindings = VideoPlayerFFIBindings.instance;
+  final VideoPlayerFFIBindings bindings = VideoPlayerFFIBindings.instance;
   if (!bindings.isLoaded) {
     bindings.load();
   }

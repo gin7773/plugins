@@ -540,9 +540,6 @@ class VideoPlayerController extends ValueNotifier<VideoPlayerValue> {
       }
       _timer?.cancel();
       _durationTimer?.cancel();
-      if (!initializingCompleter.isCompleted) {
-        initializingCompleter.completeError(obj);
-      }
     };
 
     _eventSubscription = _videoPlayerPlatform

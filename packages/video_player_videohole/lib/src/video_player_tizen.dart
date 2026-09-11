@@ -11,7 +11,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 
 import '../video_player_platform_interface.dart';
-import 'ffi_messages.g.dart';
+import 'ffi_messages.dart';
 import 'tracks.dart';
 
 class _SeekOperation {
