@@ -4,7 +4,6 @@
 
 import 'dart:async';
 
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:video_player_platform_interface/video_player_platform_interface.dart'
     as platform_interface;
@@ -17,7 +16,8 @@ import 'src/messages.g.dart';
 /// A Tizen implementation of [VideoPlayerPlatform] that uses the
 /// Pigeon-generated [TizenVideoPlayerApi].
 class VideoPlayerTizen extends platform_interface.VideoPlayerPlatform {
-  final TizenVideoPlayerApi _api = TizenVideoPlayerApi();
+  TizenVideoPlayerApi? _apiInstance;
+  TizenVideoPlayerApi get _api => _apiInstance ??= TizenVideoPlayerApi();
 
   /// Registers this class as the default platform instance.
   static void register() {
@@ -106,8 +106,8 @@ class VideoPlayerTizen extends platform_interface.VideoPlayerPlatform {
 
   @override
   Stream<platform_interface.VideoEvent> videoEventsFor(int textureId) {
-    return _eventChannelFor(textureId).receiveBroadcastStream().map((dynamic event) {
-      final map = event as Map<dynamic, dynamic>;
+    return videoEvents(instanceName: '$textureId').map((Map<Object?, Object?> event) {
+      final Map<dynamic, dynamic> map = event;
       switch (map['event']) {
         case 'initialized':
           return platform_interface.VideoEvent(
@@ -159,10 +159,6 @@ class VideoPlayerTizen extends platform_interface.VideoPlayerPlatform {
   @override
   Future<void> setMixWithOthers(bool mixWithOthers) {
     return _api.setMixWithOthers(MixWithOthersMessage(mixWithOthers: mixWithOthers));
-  }
-
-  EventChannel _eventChannelFor(int textureId) {
-    return EventChannel('flutter.io/videoPlayer/videoEvents$textureId');
   }
 
   static const Map<platform_interface.VideoFormat, String> _videoFormatStringMap =

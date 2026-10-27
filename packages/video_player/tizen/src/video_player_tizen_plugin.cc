@@ -15,6 +15,7 @@
 
 #include "log.h"
 #include "messages.h"
+#include "messages_ffi.h"
 #include "video_player.h"
 #include "video_player_error.h"
 #include "video_player_options.h"
@@ -22,7 +23,8 @@
 namespace video_player_tizen {
 
 class VideoPlayerTizenPlugin : public flutter::Plugin,
-                               public TizenVideoPlayerApi {
+                               public TizenVideoPlayerApi,
+                               public PigeonVideoPlayerEventsVideoEventsStreamHandler {
  public:
   static void RegisterWithRegistrar(flutter::PluginRegistrar *registrar);
 
@@ -45,6 +47,13 @@ class VideoPlayerTizenPlugin : public flutter::Plugin,
   std::optional<FlutterError> SetMixWithOthers(
       const MixWithOthersMessage &msg) override;
 
+  std::optional<FlutterError> OnListen(
+      const std::string &instance_name,
+      std::unique_ptr<PigeonVideoPlayerEventsVideoEventsEventSink> sink)
+      override;
+  std::optional<FlutterError> OnCancel(
+      const std::string &instance_name) override;
+
  private:
   void DisposeAllPlayers();
 
@@ -62,10 +71,9 @@ void VideoPlayerTizenPlugin::RegisterWithRegistrar(
 
 VideoPlayerTizenPlugin::VideoPlayerTizenPlugin(
     flutter::PluginRegistrar *registrar)
-    : plugin_registrar_(registrar) {
-  texture_registrar_ = registrar->texture_registrar();
-
-  TizenVideoPlayerApi::SetUp(registrar->messenger(), this);
+    : texture_registrar_(registrar->texture_registrar()) {
+  SetUpTizenVideoPlayerApiFfi(this);
+  SetUpVideoPlayerEventsVideoEventsFfi(this);
 }
 
 VideoPlayerTizenPlugin::~VideoPlayerTizenPlugin() { DisposeAllPlayers(); }
@@ -109,8 +117,8 @@ ErrorOr<TextureMessage> VideoPlayerTizenPlugin::Create(
 
   int64_t texture_id = 0;
   try {
-    auto player = std::make_unique<VideoPlayer>(
-        plugin_registrar_, texture_registrar_, uri, options_, http_headers);
+    auto player = std::make_unique<VideoPlayer>(texture_registrar_, uri,
+                                                options_, http_headers);
     texture_id = player->GetTextureId();
     players_[texture_id] = std::move(player);
   } catch (const VideoPlayerError &error) {
@@ -243,6 +251,39 @@ void VideoPlayerTizenPlugin::SeekTo(
 std::optional<FlutterError> VideoPlayerTizenPlugin::SetMixWithOthers(
     const MixWithOthersMessage &msg) {
   options_.SetMixWithOthers(msg.mix_with_others());
+  return std::nullopt;
+}
+
+std::optional<FlutterError> VideoPlayerTizenPlugin::OnListen(
+    const std::string &instance_name,
+    std::unique_ptr<PigeonVideoPlayerEventsVideoEventsEventSink> sink) {
+  int64_t texture_id = -1;
+  try {
+    texture_id = std::stoll(instance_name);
+  } catch (const std::exception &) {
+    return FlutterError("Invalid argument",
+                        "Instance name is not a texture id: " + instance_name);
+  }
+  auto iter = players_.find(texture_id);
+  if (iter == players_.end()) {
+    return FlutterError("Invalid argument", "Player not found.");
+  }
+  iter->second->SetEventSink(std::move(sink));
+  return std::nullopt;
+}
+
+std::optional<FlutterError> VideoPlayerTizenPlugin::OnCancel(
+    const std::string &instance_name) {
+  try {
+    int64_t texture_id = std::stoll(instance_name);
+    auto iter = players_.find(texture_id);
+    if (iter != players_.end()) {
+      iter->second->ClearEventSink();
+    }
+  } catch (const std::exception &) {
+    LOG_WARN("[VideoPlayerTizenPlugin] OnCancel: invalid instance name: %s",
+             instance_name.c_str());
+  }
   return std::nullopt;
 }
 

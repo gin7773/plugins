@@ -4,9 +4,6 @@
 
 #include "video_player.h"
 
-#include <flutter/event_stream_handler_functions.h>
-#include <flutter/standard_method_codec.h>
-
 #include <algorithm>
 #include <sstream>
 
@@ -82,8 +79,7 @@ FlutterDesktopGpuSurfaceDescriptor *VideoPlayer::ObtainGpuSurface(
   return gpu_surface_.get();
 }
 
-VideoPlayer::VideoPlayer(flutter::PluginRegistrar *plugin_registrar,
-                         flutter::TextureRegistrar *texture_registrar,
+VideoPlayer::VideoPlayer(flutter::TextureRegistrar *texture_registrar,
                          const std::string &uri, VideoPlayerOptions &options,
                          flutter::EncodableMap &http_headers) {
   // Initialize GMainContext and event dispatch state
@@ -202,7 +198,6 @@ VideoPlayer::VideoPlayer(flutter::PluginRegistrar *plugin_registrar,
     LOG_ERROR("screensaver_override_reset failed: %s", get_error_message(ret));
   }
 #endif
-  SetUpEventChannel(plugin_registrar->messenger());
 }
 
 VideoPlayer::~VideoPlayer() {
@@ -230,8 +225,8 @@ void VideoPlayer::SendPendingEvents() {
 
   while (!error_event_queue_.empty()) {
     if (event_sink_) {
-      event_sink_->Error(error_event_queue_.front().first,
-                         error_event_queue_.front().second);
+      event_sink_->Error(FlutterError(error_event_queue_.front().first,
+                                      error_event_queue_.front().second));
     }
     error_event_queue_.pop();
   }
@@ -273,14 +268,14 @@ void VideoPlayer::ScheduleSendPendingEvents() {
   g_source_unref(source);
 }
 
-void VideoPlayer::PushEvent(const flutter::EncodableValue &encodable_value) {
+void VideoPlayer::PushEvent(const flutter::EncodableMap &event) {
   if (!event_sink_) {
     LOG_ERROR("[VideoPlayer] event sink is nullptr.");
     return;
   }
   {
     std::lock_guard<std::mutex> lock(queue_mutex_);
-    encodable_event_queue_.push(encodable_value);
+    encodable_event_queue_.push(event);
   }
   ScheduleSendPendingEvents();
 }
@@ -297,6 +292,14 @@ void VideoPlayer::SendError(const std::string &error_code,
   }
   ScheduleSendPendingEvents();
 }
+
+void VideoPlayer::SetEventSink(
+    std::unique_ptr<PigeonVideoPlayerEventsVideoEventsEventSink> sink) {
+  event_sink_ = std::move(sink);
+  Initialize();
+}
+
+void VideoPlayer::ClearEventSink() { event_sink_ = nullptr; }
 
 void VideoPlayer::Play() {
   LOG_DEBUG("[VideoPlayer] Player starting.");
@@ -432,7 +435,6 @@ void VideoPlayer::Dispose() {
   main_context_.reset();
 
   event_sink_ = nullptr;
-  event_channel_->SetStreamHandler(nullptr);
 
   while (!packet_queue_.empty()) {
     media_packet_destroy(packet_queue_.front());
@@ -458,32 +460,6 @@ void VideoPlayer::Dispose() {
     g_source_remove(timer_id_);
   }
 #endif
-}
-
-void VideoPlayer::SetUpEventChannel(flutter::BinaryMessenger *messenger) {
-  std::string channel_name =
-      "flutter.io/videoPlayer/videoEvents" + std::to_string(texture_id_);
-  auto channel =
-      std::make_unique<flutter::EventChannel<flutter::EncodableValue>>(
-          messenger, channel_name,
-          &flutter::StandardMethodCodec::GetInstance());
-  auto handler = std::make_unique<
-      flutter::StreamHandlerFunctions<flutter::EncodableValue>>(
-      [&](const flutter::EncodableValue *arguments,
-          std::unique_ptr<flutter::EventSink<>> &&events)
-          -> std::unique_ptr<flutter::StreamHandlerError<>> {
-        event_sink_ = std::move(events);
-        Initialize();
-        return nullptr;
-      },
-      [&](const flutter::EncodableValue *arguments)
-          -> std::unique_ptr<flutter::StreamHandlerError<>> {
-        event_sink_ = nullptr;
-        return nullptr;
-      });
-  channel->SetStreamHandler(std::move(handler));
-
-  event_channel_ = std::move(channel);
 }
 
 void VideoPlayer::Initialize() {
@@ -546,7 +522,7 @@ void VideoPlayer::SendInitialized() {
         {flutter::EncodableValue("width"), flutter::EncodableValue(width)},
         {flutter::EncodableValue("height"), flutter::EncodableValue(height)},
     };
-    PushEvent(flutter::EncodableValue(result));
+    PushEvent(result);
   }
 }
 
@@ -557,7 +533,7 @@ void VideoPlayer::SendIsPlayingStateUpdate(bool is_playing) {
       {flutter::EncodableValue("isPlaying"),
        flutter::EncodableValue(is_playing)},
   };
-  PushEvent(flutter::EncodableValue(result));
+  PushEvent(result);
 }
 
 #ifdef TV_PROFILE
@@ -604,7 +580,7 @@ void VideoPlayer::OnPlayCompleted(void *data) {
   flutter::EncodableMap result = {
       {flutter::EncodableValue("event"), flutter::EncodableValue("completed")},
   };
-  player->PushEvent(flutter::EncodableValue(result));
+  player->PushEvent(result);
 
   try {
     player->Pause();
